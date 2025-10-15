@@ -11,6 +11,8 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+    @State private var chatViewModel: ChatViewModel?
+    @State private var showingSettings = false
 
     var body: some View {
         NavigationSplitView {
@@ -32,6 +34,11 @@ struct ContentView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Settings") {
+                        showingSettings = true
+                    }
+                }
 #endif
                 ToolbarItem {
                     Button(action: addItem) {
@@ -40,7 +47,31 @@ struct ContentView: View {
                 }
             }
         } detail: {
-            Text("Select an item")
+            SimpleChatView(modelContext: modelContext)
+        }
+        #if os(iOS)
+        .sheet(isPresented: $showingSettings) {
+            if let viewModel = chatViewModel {
+                SettingsView(viewModel: viewModel)
+            }
+        }
+        #endif
+        #if os(visionOS)
+        .ornament(attachmentAnchor: .scene(.topTrailing)) {
+            if showingSettings, let viewModel = chatViewModel {
+                SettingsView(viewModel: viewModel)
+                    .frame(width: 400, height: 600)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            }
+        }
+        #endif
+        .onReceive(NotificationCenter.default.publisher(for: .settingsRequested)) { _ in
+            showingSettings = true
+        }
+        .onAppear {
+            if chatViewModel == nil {
+                chatViewModel = ChatViewModel(modelContext: modelContext)
+            }
         }
     }
 
