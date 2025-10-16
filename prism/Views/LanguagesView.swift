@@ -92,18 +92,18 @@ struct LanguagesView: View {
             availableModels = [
                 LanguageModelInfo(
                     id: "default",
-                    name: "Default Model",
-                    description: "Apple's on-device language model",
+                    name: "On-Device Model",
+                    description: "Apple's privacy-focused language model",
                     capabilities: ["Fast responses", "Privacy-focused", "Offline capable"],
                     icon: "cpu",
                     accentColor: .blue
                 ),
                 LanguageModelInfo(
-                    id: "advanced",
-                    name: "Advanced Model",
-                    description: "Enhanced model with broader capabilities",
-                    capabilities: ["Complex reasoning", "Extended context", "Specialized tasks"],
-                    icon: "brain.head.profile",
+                    id: "cloudPro",
+                    name: "Cloud Pro Model",
+                    description: "Advanced cloud-based model for complex tasks",
+                    capabilities: ["Internet access", "Latest information", "Extended context"],
+                    icon: "cloud.fill",
                     accentColor: .purple,
                     isPremium: true
                 )

@@ -147,6 +147,14 @@ struct ToolItem: Identifiable {
             description: "Organize and categorize your notes automatically",
             icon: "folder.fill",
             category: .productivity,
+            isPremium: false
+        ),
+        ToolItem(
+            id: "webSearch",
+            name: "Web Search",
+            description: "Search the web for real-time information",
+            icon: "globe.badge.chevron.backward",
+            category: .productivity,
             isPremium: true
         ),
 
@@ -160,12 +168,20 @@ struct ToolItem: Identifiable {
             isPremium: false
         ),
         ToolItem(
+            id: "imageCreator",
+            name: "AI Image Generation",
+            description: "Create actual images from text descriptions (requires cloud)",
+            icon: "photo.badge.plus.fill",
+            category: .creativity,
+            isPremium: true
+        ),
+        ToolItem(
             id: "storyBuilder",
             name: "Story Builder",
             description: "Build complex narratives with character tracking",
             icon: "book.fill",
             category: .creativity,
-            isPremium: true
+            isPremium: false
         ),
         ToolItem(
             id: "musicComposer",
@@ -173,10 +189,18 @@ struct ToolItem: Identifiable {
             description: "Generate song lyrics and poetry",
             icon: "music.note",
             category: .creativity,
-            isPremium: true
+            isPremium: false
         ),
 
         // Research
+        ToolItem(
+            id: "webResearch",
+            name: "Live Web Research",
+            description: "Access current information from the internet",
+            icon: "magnifyingglass.circle.fill",
+            category: .research,
+            isPremium: true
+        ),
         ToolItem(
             id: "factChecker",
             name: "Fact Checker",
@@ -199,10 +223,18 @@ struct ToolItem: Identifiable {
             description: "Analyze and visualize data patterns",
             icon: "chart.bar.fill",
             category: .research,
-            isPremium: true
+            isPremium: false
         ),
 
         // Development
+        ToolItem(
+            id: "githubIntegration",
+            name: "GitHub Integration",
+            description: "Connect to GitHub for code management",
+            icon: "cloud.fill",
+            category: .development,
+            isPremium: true
+        ),
         ToolItem(
             id: "codeFormatter",
             name: "Code Formatter",
@@ -225,7 +257,7 @@ struct ToolItem: Identifiable {
             description: "Test and document API endpoints",
             icon: "network",
             category: .development,
-            isPremium: true
+            isPremium: false
         ),
 
         // Communication
@@ -236,6 +268,14 @@ struct ToolItem: Identifiable {
             icon: "globe",
             category: .communication,
             isPremium: false
+        ),
+        ToolItem(
+            id: "voiceTranscription",
+            name: "Voice Transcription Pro",
+            description: "Advanced voice-to-text with cloud accuracy",
+            icon: "mic.badge.plus",
+            category: .communication,
+            isPremium: true
         ),
         ToolItem(
             id: "toneAdjuster",
@@ -251,7 +291,7 @@ struct ToolItem: Identifiable {
             description: "Create compelling speeches and presentations",
             icon: "mic.fill",
             category: .communication,
-            isPremium: true
+            isPremium: false
         )
     ]
 }
