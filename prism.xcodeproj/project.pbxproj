@@ -35,12 +35,12 @@
 			path = Prism;
 			sourceTree = "<group>";
 		};
-		8FBB75D32EA020A10066305D /* prismTests */ = {
+		8FBB75D32EA020A10066305D /* PrismTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = PrismTests;
 			sourceTree = "<group>";
 		};
-		8FBB75DD2EA020A10066305D /* prismUITests */ = {
+		8FBB75DD2EA020A10066305D /* PrismUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = PrismUITests;
 			sourceTree = "<group>";
@@ -76,8 +76,8 @@
 			isa = PBXGroup;
 			children = (
 				8FBB75C32EA0209F0066305D /* Prism */,
-				8FBB75D32EA020A10066305D /* prismTests */,
-				8FBB75DD2EA020A10066305D /* prismUITests */,
+				8FBB75D32EA020A10066305D /* PrismTests */,
+				8FBB75DD2EA020A10066305D /* PrismUITests */,
 				8FBB75C22EA0209F0066305D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -117,9 +117,9 @@
 			productReference = 8FBB75C12EA0209F0066305D /* prism.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8FBB75CF2EA020A10066305D /* prismTests */ = {
+		8FBB75CF2EA020A10066305D /* PrismTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "prismTests" */;
+			buildConfigurationList = 8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismTests" */;
 			buildPhases = (
 				8FBB75CC2EA020A10066305D /* Sources */,
 				8FBB75CD2EA020A10066305D /* Frameworks */,
@@ -131,7 +131,7 @@
 				8FBB75D22EA020A10066305D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8FBB75D32EA020A10066305D /* prismTests */,
+				8FBB75D32EA020A10066305D /* PrismTests */,
 			);
 			name = PrismTests;
 			packageProductDependencies = (
@@ -140,9 +140,9 @@
 			productReference = 8FBB75D02EA020A10066305D /* PrismTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		8FBB75D92EA020A10066305D /* prismUITests */ = {
+		8FBB75D92EA020A10066305D /* PrismUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "prismUITests" */;
+			buildConfigurationList = 8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismUITests" */;
 			buildPhases = (
 				8FBB75D62EA020A10066305D /* Sources */,
 				8FBB75D72EA020A10066305D /* Frameworks */,
@@ -154,7 +154,7 @@
 				8FBB75DC2EA020A10066305D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8FBB75DD2EA020A10066305D /* prismUITests */,
+				8FBB75DD2EA020A10066305D /* PrismUITests */,
 			);
 			name = PrismUITests;
 			packageProductDependencies = (
@@ -201,8 +201,8 @@
 			projectRoot = "";
 			targets = (
 				8FBB75C02EA0209F0066305D /* Prism */,
-				8FBB75CF2EA020A10066305D /* prismTests */,
-				8FBB75D92EA020A10066305D /* prismUITests */,
+				8FBB75CF2EA020A10066305D /* PrismTests */,
+				8FBB75D92EA020A10066305D /* PrismUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -596,7 +596,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "prismTests" */ = {
+		8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75E82EA020A10066305D /* Debug */,
@@ -605,7 +605,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "prismUITests" */ = {
+		8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75EB2EA020A10066305D /* Debug */,
