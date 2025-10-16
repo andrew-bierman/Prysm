@@ -14,15 +14,12 @@ struct PrismApp: App {
     @State private var isModelAvailable = true
     @State private var unavailabilityReason: SystemLanguageModel.Availability.UnavailableReason?
     @State private var showModelUnavailableWarning = false
-    @State private var chatViewModel = ChatViewModel()
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                ChatView(viewModel: $chatViewModel)
-            }
+            AdaptiveNavigationView()
 #if os(macOS)
-            .frame(minWidth: 800, minHeight: 600)
+            .frame(minWidth: 900, minHeight: 600)
 #endif
             .onAppear {
                 checkModelAvailability()
@@ -32,7 +29,7 @@ struct PrismApp: App {
             }
         }
 #if os(macOS)
-        .defaultSize(width: 1000, height: 700)
+        .defaultSize(width: 1200, height: 800)
 #endif
     }
 
