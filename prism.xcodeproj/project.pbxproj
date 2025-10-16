@@ -25,8 +25,8 @@
 
 /* Begin PBXFileReference section */
 		8FBB75C12EA0209F0066305D /* prism.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = prism.app; path = Prism.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBB75D02EA020A10066305D /* prismTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = prismTests.xctest; path = Prism.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBB75DA2EA020A10066305D /* prismUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = prismUITests.xctest; path = Prism.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75D02EA020A10066305D /* PrismTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PrismTests.xctest; path = Prism.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75DA2EA020A10066305D /* PrismUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PrismUITests.xctest; path = Prism.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,12 +37,12 @@
 		};
 		8FBB75D32EA020A10066305D /* prismTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = prismTests;
+			path = PrismTests;
 			sourceTree = "<group>";
 		};
 		8FBB75DD2EA020A10066305D /* prismUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = prismUITests;
+			path = PrismUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -86,8 +86,8 @@
 			isa = PBXGroup;
 			children = (
 				8FBB75C12EA0209F0066305D /* prism.app */,
-				8FBB75D02EA020A10066305D /* prismTests.xctest */,
-				8FBB75DA2EA020A10066305D /* prismUITests.xctest */,
+				8FBB75D02EA020A10066305D /* PrismTests.xctest */,
+				8FBB75DA2EA020A10066305D /* PrismUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,11 +133,11 @@
 			fileSystemSynchronizedGroups = (
 				8FBB75D32EA020A10066305D /* prismTests */,
 			);
-			name = prismTests;
+			name = PrismTests;
 			packageProductDependencies = (
 			);
 			productName = prismTests;
-			productReference = 8FBB75D02EA020A10066305D /* prismTests.xctest */;
+			productReference = 8FBB75D02EA020A10066305D /* PrismTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		8FBB75D92EA020A10066305D /* prismUITests */ = {
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				8FBB75DD2EA020A10066305D /* prismUITests */,
 			);
-			name = prismUITests;
+			name = PrismUITests;
 			packageProductDependencies = (
 			);
 			productName = prismUITests;
-			productReference = 8FBB75DA2EA020A10066305D /* prismUITests.xctest */;
+			productReference = 8FBB75DA2EA020A10066305D /* PrismUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "prism" */;
+			buildConfigurationList = 8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "Prism" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -578,7 +578,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "prism" */ = {
+		8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "Prism" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75E22EA020A10066305D /* Debug */,
