@@ -28,20 +28,52 @@ struct MessageBubbleView: View {
     private var messageContent: some View {
         VStack(alignment: message.isFromUser ? .trailing : .leading, spacing: 4) {
             Text(message.content)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(
-                    message.isFromUser ?
-                    Color.accentColor : Color.gray.opacity(0.2)
-                )
-                .foregroundStyle(
-                    message.isFromUser ? .white : .primary
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .textSelection(.enabled)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                message.isFromUser ?
+                Color.accentColor : Color.gray.opacity(0.2)
+            )
+            .foregroundStyle(
+                message.isFromUser ? .white : .primary
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
 
-            Text(message.timestamp, style: .relative)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                Text(message.timestamp, style: .relative)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+
+                if !message.isFromUser, let entryID = message.entryID {
+                    // Feedback buttons for AI responses
+                    HStack(spacing: 4) {
+                        if let sentiment = viewModel.getFeedback(for: entryID) {
+                            Image(systemName: sentiment == .positive ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
+                                .font(.caption2)
+                                .foregroundStyle(sentiment == .positive ? .green : .red)
+                        } else {
+                            Button {
+                                viewModel.submitFeedback(for: entryID, sentiment: .positive)
+                            } label: {
+                                Image(systemName: "hand.thumbsup")
+                                    .font(.caption2)
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.secondary)
+
+                            Button {
+                                viewModel.submitFeedback(for: entryID, sentiment: .negative)
+                            } label: {
+                                Image(systemName: "hand.thumbsdown")
+                                    .font(.caption2)
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
         }
     }
 }

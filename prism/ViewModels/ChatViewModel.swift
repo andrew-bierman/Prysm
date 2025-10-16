@@ -18,7 +18,20 @@ final class ChatViewModel {
     var isSummarizing: Bool = false
     var isApplyingWindow: Bool = false
     var sessionCount: Int = 1
-    var instructions: String = "You are Prism, a helpful AI assistant. Be concise and friendly."
+    var baseInstructions: String = "You are Prism, a helpful AI assistant. Be concise and friendly."
+
+    var instructions: String {
+        var fullInstructions = baseInstructions
+
+        // Add custom instructions if enabled
+        if UserDefaults.standard.bool(forKey: "useCustomInstructions") {
+            if let customInstructions = UserDefaults.standard.string(forKey: "customInstructions"), !customInstructions.isEmpty {
+                fullInstructions += "\n\nUser's custom instructions:\n" + customInstructions
+            }
+        }
+
+        return fullInstructions
+    }
     var errorMessage: String?
     var showError: Bool = false
 
@@ -102,7 +115,15 @@ final class ChatViewModel {
 
     @MainActor
     func updateInstructions(_ newInstructions: String) {
-        instructions = newInstructions
+        baseInstructions = newInstructions
+        session = LanguageModelSession(
+            instructions: Instructions(instructions)
+        )
+    }
+
+    @MainActor
+    func refreshSession() {
+        // Refresh the session with potentially updated custom instructions
         session = LanguageModelSession(
             instructions: Instructions(instructions)
         )

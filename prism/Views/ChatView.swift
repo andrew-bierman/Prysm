@@ -15,6 +15,9 @@ struct ChatView: View {
     @State private var showInstructionsSheet = false
     @State private var showFeedbackSheet = false
     @State private var selectedEntryForFeedback: Transcript.Entry?
+    @State private var showTokenCount = false
+    @AppStorage("useCustomInstructions") private var useCustomInstructions = false
+    @AppStorage("customInstructions") private var customInstructions = ""
     @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
@@ -31,22 +34,40 @@ struct ChatView: View {
             )
         }
         .environment(viewModel)
-        .navigationTitle("Prism Chat (\(viewModel.session.transcript.estimatedTokenCount) tokens)")
+        .navigationTitle("Chat")
 #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
 #endif
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                if showTokenCount {
+                    Text("\(viewModel.session.transcript.estimatedTokenCount) tokens")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 Button(action: { showInstructionsSheet = true }) {
-                    Label("Instructions", systemImage: "doc.text")
+                    Label("Instructions", systemImage: useCustomInstructions ? "doc.text.fill" : "doc.text")
+                        .foregroundStyle(useCustomInstructions ? Color.accentColor : Color.primary)
                 }
                 .help("Customize AI behavior")
 
-                Button("Clear") {
-                    viewModel.clearChat()
+                Menu {
+                    Button(action: { showTokenCount.toggle() }) {
+                        Label(showTokenCount ? "Hide Token Count" : "Show Token Count", systemImage: "number")
+                    }
+                    Divider()
+                    Button("Clear Chat", role: .destructive) {
+                        viewModel.clearChat()
+                    }
+                    .disabled(viewModel.session.transcript.isEmpty)
+                } label: {
+                    Label("More", systemImage: "ellipsis.circle")
                 }
-                .disabled(viewModel.session.transcript.isEmpty)
             }
+        }
+        .sheet(isPresented: $showInstructionsSheet) {
+            InstructionsSheet(isPresented: $showInstructionsSheet)
         }
         .alert("Error", isPresented: $viewModel.showError) {
             Button("OK") {

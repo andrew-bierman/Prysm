@@ -11,9 +11,23 @@ struct ChatInputView: View {
     @Binding var messageText: String
     @Environment(ChatViewModel.self) var chatViewModel
     @FocusState.Binding var isTextFieldFocused: Bool
+    @AppStorage("useCustomInstructions") private var useCustomInstructions = false
 
     var body: some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 0) {
+            if useCustomInstructions {
+                HStack(spacing: 4) {
+                    Image(systemName: "wand.and.stars")
+                        .font(.caption2)
+                    Text("Custom instructions active")
+                        .font(.caption2)
+                }
+                .foregroundStyle(.secondary)
+                .padding(.horizontal)
+                .padding(.bottom, 4)
+            }
+
+            HStack(spacing: 12) {
             TextField("Type your message...", text: $messageText, axis: .vertical)
                 .textFieldStyle(.plain)
                 .lineLimit(1...5)
@@ -42,8 +56,9 @@ struct ChatInputView: View {
                 chatViewModel.isLoading ||
                 chatViewModel.isSummarizing
             )
+            }
+            .padding()
         }
-        .padding()
     }
 
     private func sendMessage() {
