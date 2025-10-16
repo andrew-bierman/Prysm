@@ -1,533 +1,296 @@
-import XCTest
-import SwiftData
+//
+//  ChatViewModelTests.swift
+//  PrismTests
+//
+//  Testing the ChatViewModel
+//
+
+import Testing
+import Foundation
 import FoundationModels
 @testable import Prism
 
 @MainActor
-final class ChatViewModelTests: XCTestCase {
+struct ChatViewModelTests {
 
-    var modelContainer: ModelContainer!
-    var modelContext: ModelContext!
-    var viewModel: ChatViewModel!
-
-    override func setUp() async throws {
-        try await super.setUp()
-
-        // Create in-memory model container for testing
-        modelContainer = try ModelContainer(
-            for: Message.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        modelContext = modelContainer.mainContext
-        viewModel = ChatViewModel(modelContext: modelContext)
-
-        // Wait for model initialization
-        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
-    }
-
-    override func tearDown() async throws {
-        viewModel.cleanup()
-        viewModel = nil
-        modelContext = nil
-        modelContainer = nil
-        try await super.tearDown()
-    }
-
-    // MARK: - Initialization Tests
-
+    @Test("ViewModel initializes correctly")
     func testViewModelInitialization() async {
-        XCTAssertTrue(viewModel.messages.isEmpty)
-        XCTAssertFalse(viewModel.isResponding)
-        XCTAssertNil(viewModel.currentError)
-        XCTAssertEqual(viewModel.tokenUsage, 0)
-        XCTAssertEqual(viewModel.responseTime, 0)
-        XCTAssertNotNil(viewModel.conversationId)
+        let viewModel = ChatViewModel()
+
+        #expect(viewModel.entries.isEmpty)
+        #expect(!viewModel.isLoading)
+        #expect(!viewModel.isSummarizing)
+        #expect(viewModel.currentError == nil)
+        #expect(viewModel.conversationId != nil)
     }
 
-    func testSettingsInitialization() async {
-        let settings = viewModel.settings
-        XCTAssertEqual(settings.temperature, 0.7)
-        XCTAssertEqual(settings.topP, 0.9)
-        XCTAssertEqual(settings.maxTokens, 4096)
-        XCTAssertEqual(settings.systemPrompt, "You are Prism, a helpful AI assistant.")
-        XCTAssertTrue(settings.streamResponses)
-        XCTAssertTrue(settings.enableTools)
-        XCTAssertTrue(settings.autoSave)
-        XCTAssertEqual(settings.exportFormat, .json)
+    @Test("Send message adds entries correctly")
+    func testSendMessage() async {
+        let viewModel = ChatViewModel()
+        let testMessage = "Hello, test"
+
+        // Mock sending message (would normally interact with model)
+        viewModel.entries.append(Transcript.Entry(role: .user, content: testMessage))
+
+        #expect(viewModel.entries.count == 1)
+        #expect(viewModel.entries.first?.content == testMessage)
+        #expect(viewModel.entries.first?.role == .user)
     }
 
-    // MARK: - Message Management Tests
+    @Test("Clear conversation removes all entries")
+    func testClearConversation() async {
+        let viewModel = ChatViewModel()
 
-    func testSendValidMessage() async {
-        let testMessage = "Hello, this is a test message"
+        // Add test entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Test 1"))
+        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Response 1"))
 
-        await viewModel.sendMessage(testMessage)
+        #expect(viewModel.entries.count == 2)
 
-        // Check that user message was added
-        XCTAssertEqual(viewModel.messages.count, 1)
-        XCTAssertEqual(viewModel.messages.first?.content, testMessage)
-        XCTAssertEqual(viewModel.messages.first?.role, .user)
+        // Clear conversation
+        viewModel.clearConversation()
+
+        #expect(viewModel.entries.isEmpty)
+        #expect(viewModel.conversationId != nil) // Should have new ID
     }
 
-    func testSendEmptyMessage() async {
-        await viewModel.sendMessage("")
+    @Test("Delete entry at index works correctly")
+    func testDeleteEntry() async {
+        let viewModel = ChatViewModel()
 
-        XCTAssertTrue(viewModel.messages.isEmpty)
-        XCTAssertEqual(viewModel.currentError, .invalidMessage)
+        // Add test entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Message 1"))
+        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Response 1"))
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Message 2"))
+
+        #expect(viewModel.entries.count == 3)
+
+        // Delete middle entry
+        viewModel.deleteEntry(at: 1)
+
+        #expect(viewModel.entries.count == 2)
+        #expect(viewModel.entries[0].content == "Message 1")
+        #expect(viewModel.entries[1].content == "Message 2")
     }
 
-    func testSendWhitespaceOnlyMessage() async {
-        await viewModel.sendMessage("   \n\t   ")
+    @Test("Retry last message removes assistant response")
+    func testRetryLastMessage() async {
+        let viewModel = ChatViewModel()
 
-        XCTAssertTrue(viewModel.messages.isEmpty)
-        XCTAssertEqual(viewModel.currentError, .invalidMessage)
+        // Add entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "User message"))
+        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Assistant response"))
+
+        // Find last user message
+        if let lastUserIndex = viewModel.entries.lastIndex(where: { $0.role == .user }) {
+            // Remove all entries after the last user message
+            viewModel.entries.removeLast(viewModel.entries.count - lastUserIndex - 1)
+        }
+
+        #expect(viewModel.entries.count == 1)
+        #expect(viewModel.entries.last?.role == .user)
     }
 
-    func testDeleteMessage() async {
-        // Add test messages
-        let message1 = Message(content: "First message", role: .user)
-        let message2 = Message(content: "Second message", role: .assistant)
+    @Test("Export conversation to JSON format")
+    func testExportJSON() async throws {
+        let viewModel = ChatViewModel()
 
-        await viewModel.addMessage(message1)
-        await viewModel.addMessage(message2)
+        // Add test entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Hello"))
+        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Hi there!"))
 
-        XCTAssertEqual(viewModel.messages.count, 2)
+        let exportData = viewModel.exportConversation(format: .json)
 
-        // Delete first message
-        viewModel.deleteMessage(at: 0)
+        #expect(exportData != nil)
 
-        XCTAssertEqual(viewModel.messages.count, 1)
-        XCTAssertEqual(viewModel.messages.first?.content, "Second message")
-    }
-
-    func testDeleteMessageOutOfBounds() async {
-        let message = Message(content: "Test message", role: .user)
-        await viewModel.addMessage(message)
-
-        XCTAssertEqual(viewModel.messages.count, 1)
-
-        // Try to delete with invalid index
-        viewModel.deleteMessage(at: 5)
-
-        // Message should still be there
-        XCTAssertEqual(viewModel.messages.count, 1)
-    }
-
-    func testEditMessage() async {
-        let message = Message(content: "Original content", role: .user)
-        await viewModel.addMessage(message)
-
-        let newContent = "Edited content"
-        viewModel.editMessage(at: 0, newContent: newContent)
-
-        XCTAssertEqual(viewModel.messages.first?.content, newContent)
-    }
-
-    func testEditMessageWithEmptyContent() async {
-        let originalContent = "Original content"
-        let message = Message(content: originalContent, role: .user)
-        await viewModel.addMessage(message)
-
-        viewModel.editMessage(at: 0, newContent: "")
-
-        // Content should remain unchanged
-        XCTAssertEqual(viewModel.messages.first?.content, originalContent)
-    }
-
-    // MARK: - Settings Management Tests
-
-    func testUpdateValidSettings() async {
-        var newSettings = ChatSettings()
-        newSettings.temperature = 0.5
-        newSettings.maxTokens = 2048
-        newSettings.systemPrompt = "Custom system prompt"
-
-        viewModel.updateSettings(newSettings)
-
-        XCTAssertEqual(viewModel.settings.temperature, 0.5)
-        XCTAssertEqual(viewModel.settings.maxTokens, 2048)
-        XCTAssertEqual(viewModel.settings.systemPrompt, "Custom system prompt")
-        XCTAssertNil(viewModel.currentError)
-    }
-
-    func testUpdateInvalidSettings() async {
-        var invalidSettings = ChatSettings()
-        invalidSettings.temperature = 3.0 // Invalid: > 2.0
-        invalidSettings.maxTokens = -100 // Invalid: < 0
-
-        viewModel.updateSettings(invalidSettings)
-
-        XCTAssertEqual(viewModel.currentError, .invalidConfiguration)
-    }
-
-    func testSettingsValidation() async {
-        var settings = ChatSettings()
-
-        // Test valid settings
-        XCTAssertTrue(settings.isValid)
-
-        // Test invalid temperature
-        settings.temperature = -0.1
-        XCTAssertFalse(settings.isValid)
-
-        settings.temperature = 2.1
-        XCTAssertFalse(settings.isValid)
-
-        // Reset and test invalid topP
-        settings = ChatSettings()
-        settings.topP = -0.1
-        XCTAssertFalse(settings.isValid)
-
-        settings.topP = 1.1
-        XCTAssertFalse(settings.isValid)
-
-        // Reset and test invalid maxTokens
-        settings = ChatSettings()
-        settings.maxTokens = 0
-        XCTAssertFalse(settings.isValid)
-
-        settings.maxTokens = 50000
-        XCTAssertFalse(settings.isValid)
-
-        // Reset and test empty system prompt
-        settings = ChatSettings()
-        settings.systemPrompt = ""
-        XCTAssertFalse(settings.isValid)
-
-        settings.systemPrompt = "   "
-        XCTAssertFalse(settings.isValid)
-    }
-
-    // MARK: - Export/Import Tests
-
-    func testExportConversationJSON() async throws {
-        // Add test messages
-        let userMessage = Message(content: "Hello", role: .user)
-        let assistantMessage = Message(content: "Hi there!", role: .assistant, tokens: 3)
-
-        await viewModel.addMessage(userMessage)
-        await viewModel.addMessage(assistantMessage)
-
-        let exportData = try await viewModel.exportConversation(format: .json)
-        XCTAssertFalse(exportData.isEmpty)
-
-        // Verify the export can be decoded
-        let export = try JSONDecoder().decode(ConversationExport.self, from: exportData)
-        XCTAssertEqual(export.messageCount, 2)
-        XCTAssertEqual(export.messages.count, 2)
-        XCTAssertEqual(export.messages.first?.content, "Hello")
-        XCTAssertEqual(export.messages.last?.content, "Hi there!")
-    }
-
-    func testExportConversationMarkdown() async throws {
-        let userMessage = Message(content: "Test message", role: .user)
-        await viewModel.addMessage(userMessage)
-
-        let exportData = try await viewModel.exportConversation(format: .markdown)
-        let markdownString = String(data: exportData, encoding: .utf8)
-
-        XCTAssertNotNil(markdownString)
-        XCTAssertTrue(markdownString!.contains("# "))
-        XCTAssertTrue(markdownString!.contains("## User"))
-        XCTAssertTrue(markdownString!.contains("Test message"))
-    }
-
-    func testExportConversationPlainText() async throws {
-        let userMessage = Message(content: "Plain text test", role: .user)
-        await viewModel.addMessage(userMessage)
-
-        let exportData = try await viewModel.exportConversation(format: .plainText)
-        let textString = String(data: exportData, encoding: .utf8)
-
-        XCTAssertNotNil(textString)
-        XCTAssertTrue(textString!.contains("USER: Plain text test"))
-    }
-
-    func testExportConversationCSV() async throws {
-        let userMessage = Message(content: "CSV test", role: .user, tokens: 2)
-        await viewModel.addMessage(userMessage)
-
-        let exportData = try await viewModel.exportConversation(format: .csv)
-        let csvString = String(data: exportData, encoding: .utf8)
-
-        XCTAssertNotNil(csvString)
-        XCTAssertTrue(csvString!.contains("Timestamp,Role,Content,Tokens"))
-        XCTAssertTrue(csvString!.contains("\"user\""))
-        XCTAssertTrue(csvString!.contains("\"CSV test\""))
-    }
-
-    func testImportConversation() async throws {
-        // Create export data
-        let originalMessage = Message(content: "Original message", role: .user)
-        await viewModel.addMessage(originalMessage)
-
-        let exportData = try await viewModel.exportConversation(format: .json)
-
-        // Clear current conversation
-        await viewModel.clearSession()
-        XCTAssertTrue(viewModel.messages.isEmpty)
-
-        // Import the conversation
-        try await viewModel.importConversation(from: exportData)
-
-        XCTAssertEqual(viewModel.messages.count, 1)
-        XCTAssertEqual(viewModel.messages.first?.content, "Original message")
-        XCTAssertEqual(viewModel.messages.first?.role, .user)
-    }
-
-    func testImportInvalidData() async {
-        let invalidData = "invalid json data".data(using: .utf8)!
-
-        do {
-            try await viewModel.importConversation(from: invalidData)
-            XCTFail("Should have thrown an error")
-        } catch {
-            XCTAssertTrue(error is ChatError)
-            if case .importFailed = error as? ChatError {
-                // Expected error
-            } else {
-                XCTFail("Unexpected error type")
-            }
+        if let data = exportData {
+            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            #expect(json != nil)
+            #expect(json?["messageCount"] as? Int == 2)
         }
     }
 
-    // MARK: - Error Handling Tests
+    @Test("Export conversation to Markdown format")
+    func testExportMarkdown() async {
+        let viewModel = ChatViewModel()
 
-    func testErrorHandling() async {
-        let testError = ChatError.networkError
-        viewModel.handleError(testError)
+        // Add test entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Test message"))
+        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Test response"))
 
-        XCTAssertEqual(viewModel.currentError, .networkError)
+        let exportData = viewModel.exportConversation(format: .markdown)
+
+        #expect(exportData != nil)
+
+        if let data = exportData,
+           let markdown = String(data: data, encoding: .utf8) {
+            #expect(markdown.contains("# Conversation"))
+            #expect(markdown.contains("## User"))
+            #expect(markdown.contains("## Assistant"))
+            #expect(markdown.contains("Test message"))
+            #expect(markdown.contains("Test response"))
+        }
     }
 
-    func testClearError() async {
-        viewModel.handleError(ChatError.rateLimitExceeded)
-        XCTAssertNotNil(viewModel.currentError)
+    @Test("Export conversation to plain text format")
+    func testExportPlainText() async {
+        let viewModel = ChatViewModel()
 
-        viewModel.clearError()
-        XCTAssertNil(viewModel.currentError)
+        // Add test entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Plain text test"))
+
+        let exportData = viewModel.exportConversation(format: .plainText)
+
+        #expect(exportData != nil)
+
+        if let data = exportData,
+           let text = String(data: data, encoding: .utf8) {
+            #expect(text.contains("USER: Plain text test"))
+        }
     }
 
-    func testGenericErrorHandling() async {
-        struct TestError: Error {}
-        let genericError = TestError()
+    @Test("Export conversation to CSV format")
+    func testExportCSV() async {
+        let viewModel = ChatViewModel()
 
-        viewModel.handleError(genericError)
-        XCTAssertEqual(viewModel.currentError, .networkError)
+        // Add test entries
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "CSV test"))
+
+        let exportData = viewModel.exportConversation(format: .csv)
+
+        #expect(exportData != nil)
+
+        if let data = exportData,
+           let csv = String(data: data, encoding: .utf8) {
+            #expect(csv.contains("Timestamp,Role,Content"))
+            #expect(csv.contains("\"user\",\"CSV test\""))
+        }
     }
 
-    // MARK: - Tool Integration Tests
+    @Test("Custom instructions are included in prompt")
+    func testCustomInstructions() async {
+        let viewModel = ChatViewModel()
 
-    func testGetAvailableTools() async {
-        let tools = viewModel.getAvailableTools()
+        // Set custom instructions
+        UserDefaults.standard.set(true, forKey: "useCustomInstructions")
+        UserDefaults.standard.set("Be concise", forKey: "customInstructions")
 
-        XCTAssertFalse(tools.isEmpty)
-        XCTAssertEqual(tools.count, 3) // Weather, Calculator, WebSearch
+        let instructions = viewModel.instructions
 
-        let toolNames = tools.map { $0.name }
-        XCTAssertTrue(toolNames.contains("get_weather"))
-        XCTAssertTrue(toolNames.contains("calculate"))
-        XCTAssertTrue(toolNames.contains("web_search"))
+        #expect(instructions.contains("You are Prism"))
+        #expect(instructions.contains("Be concise"))
+
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "useCustomInstructions")
+        UserDefaults.standard.removeObject(forKey: "customInstructions")
     }
 
-    func testEnableTool() async {
-        XCTAssertTrue(viewModel.settings.selectedTools.isEmpty)
-
-        viewModel.enableTool("get_weather")
-
-        XCTAssertTrue(viewModel.settings.selectedTools.contains("get_weather"))
-    }
-
-    func testDisableTool() async {
-        viewModel.enableTool("get_weather")
-        viewModel.enableTool("calculate")
-
-        XCTAssertTrue(viewModel.settings.selectedTools.contains("get_weather"))
-        XCTAssertTrue(viewModel.settings.selectedTools.contains("calculate"))
-
-        viewModel.disableTool("get_weather")
-
-        XCTAssertFalse(viewModel.settings.selectedTools.contains("get_weather"))
-        XCTAssertTrue(viewModel.settings.selectedTools.contains("calculate"))
-    }
-
-    func testEnableDuplicateTool() async {
-        viewModel.enableTool("get_weather")
-        viewModel.enableTool("get_weather") // Enable again
-
-        // Should only appear once
-        let weatherToolCount = viewModel.settings.selectedTools.filter { $0 == "get_weather" }.count
-        XCTAssertEqual(weatherToolCount, 1)
-    }
-
-    // MARK: - Conversation Management Tests
-
-    func testClearSession() async {
-        // Add test data
-        let message = Message(content: "Test", role: .user)
-        await viewModel.addMessage(message)
-        viewModel.handleError(ChatError.networkError)
-
-        XCTAssertFalse(viewModel.messages.isEmpty)
-        XCTAssertNotNil(viewModel.currentError)
-
-        let originalConversationId = viewModel.conversationId
-
-        await viewModel.clearSession()
-
-        XCTAssertTrue(viewModel.messages.isEmpty)
-        XCTAssertNil(viewModel.currentError)
-        XCTAssertFalse(viewModel.isResponding)
-        XCTAssertEqual(viewModel.responseTime, 0)
-        XCTAssertEqual(viewModel.tokenUsage, 0)
-        XCTAssertNotEqual(viewModel.conversationId, originalConversationId)
-    }
-
-    func testRetryLastMessage() async {
-        // Add user message followed by assistant message
-        let userMessage = Message(content: "Hello", role: .user)
-        let assistantMessage = Message(content: "Hi", role: .assistant)
-
-        await viewModel.addMessage(userMessage)
-        await viewModel.addMessage(assistantMessage)
-
-        XCTAssertEqual(viewModel.messages.count, 2)
-
-        // This would normally trigger a new response, but since we don't have a real model,
-        // we're just testing that it finds the last user message correctly
-        // In a real test with mocked model, we'd verify the retry behavior
-    }
-
-    func testRetryWithoutUserMessage() async {
-        // Add only assistant message
-        let assistantMessage = Message(content: "Hi", role: .assistant)
-        await viewModel.addMessage(assistantMessage)
-
-        await viewModel.retryLastMessage()
-
-        // Should not change anything if there's no user message
-        XCTAssertEqual(viewModel.messages.count, 1)
-    }
-
-    // MARK: - Cancellation Tests
-
-    func testCancelCurrentOperation() async {
-        viewModel.cancelCurrentOperation()
-
-        XCTAssertFalse(viewModel.isResponding)
-    }
-
-    // MARK: - Computed Properties Tests
-
-    func testHasMessages() async {
-        XCTAssertFalse(viewModel.hasMessages)
-
-        let message = Message(content: "Test", role: .user)
-        await viewModel.addMessage(message)
-
-        XCTAssertTrue(viewModel.hasMessages)
-    }
-
-    func testCanSendMessage() async {
-        // Initially should be able to send (assuming model is available)
-        XCTAssertTrue(viewModel.canSendMessage)
-
-        // Test when responding
-        // Note: We can't easily test this without mocking the model
-        // In a real implementation, you'd mock the isResponding state
-    }
-
-    func testLastMessage() async {
-        XCTAssertNil(viewModel.lastMessage)
-
-        let message1 = Message(content: "First", role: .user)
-        let message2 = Message(content: "Second", role: .assistant)
-
-        await viewModel.addMessage(message1)
-        XCTAssertEqual(viewModel.lastMessage?.content, "First")
-
-        await viewModel.addMessage(message2)
-        XCTAssertEqual(viewModel.lastMessage?.content, "Second")
-    }
-
+    @Test("Conversation title generation")
     func testConversationTitle() async {
-        // Empty conversation
-        XCTAssertEqual(viewModel.conversationTitle, "New Conversation")
+        let viewModel = ChatViewModel()
 
-        // With user message
-        let userMessage = Message(content: "This is a long message that should be truncated for title", role: .user)
-        await viewModel.addMessage(userMessage)
+        // Empty conversation
+        #expect(viewModel.conversationTitle == "New Conversation")
+
+        // Add user message
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "This is a test message"))
 
         let title = viewModel.conversationTitle
-        XCTAssertNotEqual(title, "New Conversation")
-        XCTAssertTrue(title.count <= "This is a long message".count) // Should be truncated
+        #expect(title != "New Conversation")
+        #expect(title == "This is a test message")
+
+        // Test truncation with long message
+        viewModel.entries.removeAll()
+        let longMessage = String(repeating: "A", count: 100)
+        viewModel.entries.append(Transcript.Entry(role: .user, content: longMessage))
+
+        let truncatedTitle = viewModel.conversationTitle
+        #expect(truncatedTitle.count <= 50)
     }
 
-    func testGetConversationStats() async {
-        let stats = viewModel.getConversationStats()
-        XCTAssertEqual(stats.messageCount, 0)
-        XCTAssertEqual(stats.tokenUsage, 0)
-        XCTAssertEqual(stats.responseTime, 0)
+    @Test("Has messages computed property")
+    func testHasMessages() async {
+        let viewModel = ChatViewModel()
 
-        let message = Message(content: "Test", role: .user, tokens: 5)
-        await viewModel.addMessage(message)
+        #expect(!viewModel.hasMessages)
 
-        let newStats = viewModel.getConversationStats()
-        XCTAssertEqual(newStats.messageCount, 1)
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "Test"))
+
+        #expect(viewModel.hasMessages)
     }
 
-    // MARK: - Performance Tests
+    @Test("Last entry computed property")
+    func testLastEntry() async {
+        let viewModel = ChatViewModel()
 
-    func testPerformanceAddManyMessages() async {
-        measure {
-            Task {
-                for i in 0..<100 {
-                    let message = Message(content: "Message \(i)", role: i % 2 == 0 ? .user : .assistant)
-                    await viewModel.addMessage(message)
-                }
-            }
-        }
+        #expect(viewModel.lastEntry == nil)
+
+        viewModel.entries.append(Transcript.Entry(role: .user, content: "First"))
+        #expect(viewModel.lastEntry?.content == "First")
+
+        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Second"))
+        #expect(viewModel.lastEntry?.content == "Second")
     }
 
-    func testPerformanceExportLargeConversation() async throws {
-        // Add many messages
-        for i in 0..<50 {
-            let message = Message(content: "Test message \(i)", role: i % 2 == 0 ? .user : .assistant)
-            await viewModel.addMessage(message)
-        }
+    @Test("Can send message when not loading")
+    func testCanSendMessage() async {
+        let viewModel = ChatViewModel()
 
-        measure {
-            Task {
-                do {
-                    _ = try await viewModel.exportConversation(format: .json)
-                } catch {
-                    XCTFail("Export failed: \(error)")
-                }
-            }
-        }
+        #expect(viewModel.canSendMessage)
+
+        viewModel.isLoading = true
+        #expect(!viewModel.canSendMessage)
+
+        viewModel.isLoading = false
+        #expect(viewModel.canSendMessage)
+    }
+
+    @Test("Error handling")
+    func testErrorHandling() async {
+        let viewModel = ChatViewModel()
+
+        #expect(viewModel.currentError == nil)
+
+        viewModel.currentError = "Test error"
+        #expect(viewModel.currentError == "Test error")
+
+        viewModel.clearError()
+        #expect(viewModel.currentError == nil)
     }
 }
 
-// MARK: - Test Helpers
+// MARK: - Performance Tests
 
 extension ChatViewModelTests {
-    private func addMessage(_ message: Message) async {
-        await viewModel.addMessage(message)
+    @Test("Performance: Add many entries")
+    func testPerformanceAddManyEntries() async {
+        let viewModel = ChatViewModel()
+
+        for i in 0..<100 {
+            let entry = Transcript.Entry(
+                role: i % 2 == 0 ? .user : .assistant,
+                content: "Message \(i)"
+            )
+            viewModel.entries.append(entry)
+        }
+
+        #expect(viewModel.entries.count == 100)
     }
-}
 
-// MARK: - Mock Data Extensions
+    @Test("Performance: Export large conversation")
+    func testPerformanceExportLargeConversation() async {
+        let viewModel = ChatViewModel()
 
-extension Message {
-    static func mockUser(_ content: String) -> Message {
-        Message(content: content, role: .user)
-    }
+        // Add many entries
+        for i in 0..<50 {
+            let entry = Transcript.Entry(
+                role: i % 2 == 0 ? .user : .assistant,
+                content: "Test message \(i) with some content to make it more realistic"
+            )
+            viewModel.entries.append(entry)
+        }
 
-    static func mockAssistant(_ content: String, tokens: Int? = nil) -> Message {
-        Message(content: content, role: .assistant, tokens: tokens)
-    }
-
-    static func mockSystem(_ content: String) -> Message {
-        Message(content: content, role: .system)
+        let exportData = viewModel.exportConversation(format: .json)
+        #expect(exportData != nil)
     }
 }

@@ -1,13 +1,13 @@
 //
-//  prismUITests.swift
-//  prismUITests
+//  PrismUITests.swift
+//  PrismUITests
 //
 //  Created by Andrew Bierman on 10/15/25.
 //
 
 import XCTest
 
-final class prismUITests: XCTestCase {
+final class PrismUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

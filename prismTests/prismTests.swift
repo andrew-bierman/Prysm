@@ -1,16 +1,16 @@
 //
-//  prismTests.swift
-//  prismTests
+//  PrismTests.swift
+//  PrismTests
 //
 //  Created by Andrew Bierman on 10/15/25.
 //
 
 import Testing
 
-struct prismTests {
+struct PrismTests {
 
     @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+        #expect(true, "Basic test passes")
     }
 
 }
