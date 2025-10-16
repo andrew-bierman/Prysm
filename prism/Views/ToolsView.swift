@@ -363,10 +363,10 @@ struct ToolCard: View {
             .padding()
             .background(isEnabled ? tool.category.color.opacity(0.1) : Color.clear)
             .overlay(
-                RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium)
+                RoundedRectangle(cornerRadius: CornerRadius.medium)
                     .stroke(isEnabled ? tool.category.color : Color.secondary.opacity(0.2), lineWidth: isEnabled ? 2 : 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
         }
         .buttonStyle(.plain)
     }

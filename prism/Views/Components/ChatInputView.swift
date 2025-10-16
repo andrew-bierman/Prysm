@@ -28,32 +28,34 @@ struct ChatInputView: View {
             }
 
             HStack(alignment: .bottom, spacing: Spacing.small) {
-                TextField("Type your message...", text: $messageText, axis: .vertical)
-                    .textFieldStyle(.plain)
-                    .lineLimit(1...5)
-                    .focused($isTextFieldFocused)
-                    .padding(.horizontal, Spacing.medium)
-                    .padding(.vertical, Spacing.small)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Spacing.CornerRadius.xLarge))
-                    .onSubmit {
-                        sendMessage()
-                    }
+                HStack(alignment: .bottom, spacing: Spacing.small) {
+                    TextField("Type your message...", text: $messageText, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .lineLimit(1...5)
+                        .focused($isTextFieldFocused)
+                        .onSubmit {
+                            sendMessage()
+                        }
 #if os(iOS)
-                    .submitLabel(.send)
+                        .submitLabel(.send)
 #endif
 
-                Button(action: sendMessage) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(.title2)
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .gray : .blue)
+                    Button(action: sendMessage) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.title2)
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.secondary : Color.accentColor)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(
+                        messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        chatViewModel.isLoading ||
+                        chatViewModel.isSummarizing
+                    )
                 }
-                .buttonStyle(.plain)
-                .disabled(
-                    messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                    chatViewModel.isLoading ||
-                    chatViewModel.isSummarizing
-                )
+                .padding(Spacing.small)
+                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.pill))
             }
             .padding()
         }

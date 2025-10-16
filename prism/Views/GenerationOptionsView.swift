@@ -86,7 +86,7 @@ struct GenerationOptionsView: View {
             }
             .padding()
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
         }
     }
 
@@ -119,7 +119,7 @@ struct GenerationOptionsView: View {
             }
             .padding()
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
         }
     }
 
@@ -155,7 +155,7 @@ struct GenerationOptionsView: View {
             }
             .padding()
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
         }
     }
 
@@ -208,7 +208,7 @@ struct GenerationOptionsView: View {
                 .padding()
             }
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
         }
     }
 

@@ -180,10 +180,10 @@ struct ModelCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(isSelected ? model.accentColor.opacity(0.1) : Color.clear)
             .overlay(
-                RoundedRectangle(cornerRadius: Spacing.CornerRadius.large)
+                RoundedRectangle(cornerRadius: CornerRadius.large)
                     .stroke(isSelected ? model.accentColor : Color.secondary.opacity(0.2), lineWidth: isSelected ? 2 : 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
         }
         .buttonStyle(.plain)
     }

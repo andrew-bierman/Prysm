@@ -38,7 +38,7 @@ struct MessageBubbleView: View {
             .foregroundStyle(
                 message.isFromUser ? .white : .primary
             )
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
 
             HStack(spacing: Spacing.small) {
                 Text(message.timestamp, style: .relative)

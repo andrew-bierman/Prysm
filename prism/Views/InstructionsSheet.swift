@@ -91,7 +91,7 @@ struct InstructionsSheet: View {
         }
         .padding()
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
     }
 
     private var instructionsEditor: some View {
@@ -112,9 +112,9 @@ struct InstructionsSheet: View {
                 .frame(minHeight: 150)
                 .scrollContentBackground(.hidden)
                 .background(Color.gray.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
                 .overlay(
-                    RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium)
+                    RoundedRectangle(cornerRadius: CornerRadius.medium)
                         .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                 )
         }
@@ -157,7 +157,7 @@ struct InstructionsSheet: View {
                         .padding(Spacing.small)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.accentColor.opacity(0.05))
-                        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.small))
+                        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.small))
                         .lineLimit(3)
                 }
             }
@@ -176,7 +176,7 @@ struct InstructionsSheet: View {
         }
         .padding()
         .background(Color.blue.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
     }
 
     private func saveInstructions() {

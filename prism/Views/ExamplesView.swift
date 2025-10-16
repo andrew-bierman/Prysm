@@ -109,9 +109,9 @@ struct ExampleCard: View {
         .padding()
         .frame(maxWidth: .infinity, minHeight: 150)
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
         .overlay(
-            RoundedRectangle(cornerRadius: Spacing.CornerRadius.large)
+            RoundedRectangle(cornerRadius: CornerRadius.large)
                 .stroke(example.accentColor.opacity(0.2), lineWidth: 1)
         )
     }
@@ -241,7 +241,7 @@ struct ExampleDetailView: View {
         }
         .padding()
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
         .padding()
     }
 
