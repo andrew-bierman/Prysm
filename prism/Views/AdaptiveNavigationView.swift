@@ -34,32 +34,39 @@ struct AdaptiveNavigationView: View {
             get: { navigationCoordinator.tabSelection },
             set: { navigationCoordinator.tabSelection = $0 }
         )) {
-            Tab(TabSelection.chat.displayName, systemImage: TabSelection.chat.systemImage, value: .chat) {
-                NavigationStack {
-                    ChatView(viewModel: $chatViewModel)
-                }
+            NavigationStack {
+                ChatView(viewModel: $chatViewModel)
             }
+            .tabItem {
+                Label(TabSelection.chat.displayName, systemImage: TabSelection.chat.systemImage)
+            }
+            .tag(TabSelection.chat)
 
-            Tab(TabSelection.assistant.displayName, systemImage: TabSelection.assistant.systemImage, value: .assistant) {
-                NavigationStack {
-                    AssistantView()
-                }
+            NavigationStack {
+                AssistantView()
             }
+            .tabItem {
+                Label(TabSelection.assistant.displayName, systemImage: TabSelection.assistant.systemImage)
+            }
+            .tag(TabSelection.assistant)
 
-            Tab(TabSelection.model.displayName, systemImage: TabSelection.model.systemImage, value: .model) {
-                NavigationStack {
-                    ModelView()
-                }
+            NavigationStack {
+                ModelView()
             }
+            .tabItem {
+                Label(TabSelection.model.displayName, systemImage: TabSelection.model.systemImage)
+            }
+            .tag(TabSelection.model)
 
-            Tab(TabSelection.settings.displayName, systemImage: TabSelection.settings.systemImage, value: .settings) {
-                NavigationStack {
-                    SettingsView()
-                }
+            NavigationStack {
+                SettingsView()
             }
+            .tabItem {
+                Label(TabSelection.settings.displayName, systemImage: TabSelection.settings.systemImage)
+            }
+            .tag(TabSelection.settings)
         }
 #if os(iOS)
-        .tabBarMinimizeBehavior(.onScrollDown)
         .ignoresSafeArea(.keyboard)
 #endif
         .onChange(of: navigationCoordinator.tabSelection) { _, newValue in
