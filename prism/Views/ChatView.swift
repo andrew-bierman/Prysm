@@ -69,6 +69,14 @@ struct ChatView: View {
         .sheet(isPresented: $showInstructionsSheet) {
             InstructionsSheet(isPresented: $showInstructionsSheet)
         }
+        .onChange(of: useCustomInstructions) { _, _ in
+            viewModel.refreshSession()
+        }
+        .onChange(of: customInstructions) { _, _ in
+            if useCustomInstructions {
+                viewModel.refreshSession()
+            }
+        }
         .alert("Error", isPresented: $viewModel.showError) {
             Button("OK") {
                 viewModel.dismissError()

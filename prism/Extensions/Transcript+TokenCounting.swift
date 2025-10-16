@@ -28,7 +28,7 @@ extension Transcript.Entry {
         case .toolOutput(let output):
             return output.segments.reduce(0) { $0 + $1.estimatedTokenCount } + 3
         @unknown default:
-            fatalError()
+            return 0 // Safe default for unknown cases
         }
     }
 }
@@ -42,7 +42,7 @@ extension Transcript.Segment {
         case .structure(let structuredSegment):
             return estimateTokensForStructured(structuredSegment.content)
         @unknown default:
-            fatalError()
+            return 0 // Safe default for unknown cases
         }
     }
 }

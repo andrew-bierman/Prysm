@@ -185,25 +185,29 @@ struct SettingsView: View {
                 }
             }
 
-            Link(destination: URL(string: "https://apple.com/privacy")!) {
-                HStack {
-                    Label("Privacy Policy", systemImage: "hand.raised")
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Image(systemName: "arrow.up.forward.square")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            if let privacyURL = URL(string: "https://apple.com/privacy") {
+                Link(destination: privacyURL) {
+                    HStack {
+                        Label("Privacy Policy", systemImage: "hand.raised")
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "arrow.up.forward.square")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
-            Link(destination: URL(string: "https://apple.com/legal")!) {
-                HStack {
-                    Label("Terms of Service", systemImage: "doc.text")
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Image(systemName: "arrow.up.forward.square")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            if let termsURL = URL(string: "https://apple.com/legal") {
+                Link(destination: termsURL) {
+                    HStack {
+                        Label("Terms of Service", systemImage: "doc.text")
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "arrow.up.forward.square")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }
@@ -221,11 +225,34 @@ struct SettingsView: View {
     }
 
     private func clearConversationHistory() {
-        // Implementation for clearing history
+        // Clear UserDefaults for conversation-related data
+        UserDefaults.standard.removeObject(forKey: "conversationHistory")
+        UserDefaults.standard.removeObject(forKey: "savedTranscripts")
+
+        // Clear any stored conversation summaries
+        if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let conversationsURL = documentsDirectory.appendingPathComponent("Conversations")
+            try? FileManager.default.removeItem(at: conversationsURL)
+        }
     }
 
     private func clearCache() {
-        // Implementation for clearing cache
+        // Clear URLCache
+        URLCache.shared.removeAllCachedResponses()
+
+        // Clear temporary directory
+        let tempDirectory = FileManager.default.temporaryDirectory
+        if let tempContents = try? FileManager.default.contentsOfDirectory(at: tempDirectory, includingPropertiesForKeys: nil) {
+            for file in tempContents {
+                try? FileManager.default.removeItem(at: file)
+            }
+        }
+
+        // Clear image cache if any
+        URLCache.shared.diskCapacity = 0
+        URLCache.shared.diskCapacity = 50 * 1024 * 1024 // Reset to 50MB
+        URLCache.shared.memoryCapacity = 0
+        URLCache.shared.memoryCapacity = 10 * 1024 * 1024 // Reset to 10MB
     }
 }
 
