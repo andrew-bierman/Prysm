@@ -178,7 +178,7 @@ struct SettingsView: View {
                 showingAbout = true
             } label: {
                 HStack {
-                    Label("About Prism", systemImage: "info.circle")
+                    Label("About \(AppConfig.appName)", systemImage: "info.circle")
                         .foregroundStyle(.primary)
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -187,7 +187,7 @@ struct SettingsView: View {
                 }
             }
 
-            if let privacyURL = URL(string: "https://apple.com/privacy") {
+            if let privacyURL = AppConfig.privacyURL {
                 Link(destination: privacyURL) {
                     HStack {
                         Label("Privacy Policy", systemImage: "hand.raised")
@@ -200,7 +200,7 @@ struct SettingsView: View {
                 }
             }
 
-            if let termsURL = URL(string: "https://apple.com/legal") {
+            if let termsURL = AppConfig.termsURL {
                 Link(destination: termsURL) {
                     HStack {
                         Label("Terms of Service", systemImage: "doc.text")
@@ -286,7 +286,7 @@ struct AboutView: View {
                             }
                         }
 
-                        Text("Prism")
+                        Text("Luma AI")
                             .font(.largeTitle)
                             .bold()
 

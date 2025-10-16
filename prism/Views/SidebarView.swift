@@ -65,7 +65,7 @@ struct SidebarView: View {
                 }
             }
         }
-        .navigationTitle("Prism")
+        .navigationTitle(AppConfig.appName)
 #if os(macOS)
         .navigationSplitViewColumnWidth(min: 250, ideal: 280, max: 350)
 #endif

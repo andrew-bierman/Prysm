@@ -29,7 +29,7 @@ struct AppIconView: View {
                 endPoint: .bottomTrailing
             )
 
-            // Prism shape overlay
+            // Luma AI shape overlay
             PrismShape()
                 .fill(
                     LinearGradient(

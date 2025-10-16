@@ -18,7 +18,7 @@ final class ChatViewModel {
     var isSummarizing: Bool = false
     var isApplyingWindow: Bool = false
     var sessionCount: Int = 1
-    var baseInstructions: String = "You are Prism, a helpful AI assistant. Be concise and friendly."
+    var baseInstructions: String = AppConfig.assistantInstructions
 
     var instructions: String {
         var fullInstructions = baseInstructions
@@ -53,7 +53,7 @@ final class ChatViewModel {
     init() {
         self.session = LanguageModelSession(
             instructions: Instructions(
-                "You are Prism, a helpful AI assistant. Be concise and friendly."
+                AppConfig.assistantInstructions
             )
         )
     }

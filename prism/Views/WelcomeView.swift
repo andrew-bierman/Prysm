@@ -16,8 +16,8 @@ struct WelcomeView: View {
         VStack(spacing: 0) {
             TabView(selection: $currentPage) {
                 WelcomePageView(
-                    title: "Welcome to Prism",
-                    subtitle: "Your AI companion powered by Apple Intelligence",
+                    title: AppConfig.welcomeTitle,
+                    subtitle: AppConfig.welcomeSubtitle,
                     systemImage: "sparkles",
                     description: "Experience the power of on-device AI with privacy and performance at its core.",
                     gradient: [.blue, .purple]
