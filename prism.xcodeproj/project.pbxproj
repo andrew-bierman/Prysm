@@ -12,27 +12,27 @@
 			containerPortal = 8FBB75B92EA0209F0066305D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8FBB75C02EA0209F0066305D;
-			remoteInfo = prism;
+			remoteInfo = Prism;
 		};
 		8FBB75DB2EA020A10066305D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FBB75B92EA0209F0066305D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8FBB75C02EA0209F0066305D;
-			remoteInfo = prism;
+			remoteInfo = Prism;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8FBB75C12EA0209F0066305D /* prism.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = prism.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBB75D02EA020A10066305D /* prismTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = prismTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBB75DA2EA020A10066305D /* prismUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = prismUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75C12EA0209F0066305D /* prism.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = prism.app; path = Prism.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75D02EA020A10066305D /* prismTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = prismTests.xctest; path = Prism.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75DA2EA020A10066305D /* prismUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = prismUITests.xctest; path = Prism.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8FBB75C32EA0209F0066305D /* prism */ = {
+		8FBB75C32EA0209F0066305D /* Prism */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = prism;
+			path = Prism;
 			sourceTree = "<group>";
 		};
 		8FBB75D32EA020A10066305D /* prismTests */ = {
@@ -75,7 +75,7 @@
 		8FBB75B82EA0209F0066305D = {
 			isa = PBXGroup;
 			children = (
-				8FBB75C32EA0209F0066305D /* prism */,
+				8FBB75C32EA0209F0066305D /* Prism */,
 				8FBB75D32EA020A10066305D /* prismTests */,
 				8FBB75DD2EA020A10066305D /* prismUITests */,
 				8FBB75C22EA0209F0066305D /* Products */,
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8FBB75C02EA0209F0066305D /* prism */ = {
+		8FBB75C02EA0209F0066305D /* Prism */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "prism" */;
+			buildConfigurationList = 8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "Prism" */;
 			buildPhases = (
 				8FBB75BD2EA0209F0066305D /* Sources */,
 				8FBB75BE2EA0209F0066305D /* Frameworks */,
@@ -108,12 +108,12 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8FBB75C32EA0209F0066305D /* prism */,
+				8FBB75C32EA0209F0066305D /* Prism */,
 			);
-			name = prism;
+			name = Prism;
 			packageProductDependencies = (
 			);
-			productName = prism;
+			productName = Prism;
 			productReference = 8FBB75C12EA0209F0066305D /* prism.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -200,7 +200,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8FBB75C02EA0209F0066305D /* prism */,
+				8FBB75C02EA0209F0066305D /* Prism */,
 				8FBB75CF2EA020A10066305D /* prismTests */,
 				8FBB75D92EA020A10066305D /* prismUITests */,
 			);
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		8FBB75D22EA020A10066305D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FBB75C02EA0209F0066305D /* prism */;
+			target = 8FBB75C02EA0209F0066305D /* Prism */;
 			targetProxy = 8FBB75D12EA020A10066305D /* PBXContainerItemProxy */;
 		};
 		8FBB75DC2EA020A10066305D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FBB75C02EA0209F0066305D /* prism */;
+			target = 8FBB75C02EA0209F0066305D /* Prism */;
 			targetProxy = 8FBB75DB2EA020A10066305D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -414,7 +414,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = andrewbierman.prism;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Prism;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -458,7 +458,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = andrewbierman.prism;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Prism;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -485,7 +485,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = andrewbierman.prismTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Prism;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -511,7 +511,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = andrewbierman.prismTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Prism;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -536,7 +536,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = andrewbierman.prismUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Prism;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -545,7 +545,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = prism;
+				TEST_TARGET_NAME = Prism;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -561,7 +561,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = andrewbierman.prismUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Prism;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -570,7 +570,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = prism;
+				TEST_TARGET_NAME = Prism;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -587,7 +587,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "prism" */ = {
+		8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "Prism" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75E52EA020A10066305D /* Debug */,
