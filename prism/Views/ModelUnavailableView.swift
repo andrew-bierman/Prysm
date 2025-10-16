@@ -12,6 +12,14 @@ struct ModelUnavailableView: View {
     let reason: SystemLanguageModel.Availability.UnavailableReason?
     @Environment(\.dismiss) private var dismiss
 
+    private var systemBackgroundColor: Color {
+#if os(iOS)
+        Color(UIColor.systemBackground)
+#else
+        Color(NSColor.windowBackgroundColor)
+#endif
+    }
+
     var body: some View {
         ContentUnavailableView {
             Label("Apple Intelligence Not Available", systemImage: "sparkles.slash")
@@ -33,9 +41,10 @@ struct ModelUnavailableView: View {
         }
 #if os(iOS)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor.systemBackground))
+        .background(systemBackgroundColor)
 #else
         .frame(width: 500, height: 300)
+        .background(systemBackgroundColor)
 #endif
     }
 

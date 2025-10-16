@@ -66,7 +66,7 @@ struct LanguagesView: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
+        .padding(.vertical, Spacing.xLarge * 2)
     }
 
     private var modelsList: some View {
@@ -148,7 +148,7 @@ struct ModelCard: View {
                         Label("Premium", systemImage: "star.fill")
                             .font(.caption)
                             .padding(.horizontal, Spacing.small)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, Spacing.xSmall)
                             .background(model.accentColor.opacity(0.2))
                             .clipShape(Capsule())
                     }
@@ -169,7 +169,7 @@ struct ModelCard: View {
                             Text(capability)
                                 .font(.caption)
                                 .padding(.horizontal, Spacing.small)
-                                .padding(.vertical, 4)
+                                .padding(.vertical, Spacing.xSmall)
                                 .background(.secondary.opacity(0.1))
                                 .clipShape(Capsule())
                         }
@@ -178,12 +178,12 @@ struct ModelCard: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(isSelected ? model.accentColor.opacity(0.1) : Color(.systemBackground))
+            .background(isSelected ? model.accentColor.opacity(0.1) : Color.clear)
             .overlay(
-                RoundedRectangle(cornerRadius: CornerRadius.large)
+                RoundedRectangle(cornerRadius: Spacing.CornerRadius.large)
                     .stroke(isSelected ? model.accentColor : Color.secondary.opacity(0.2), lineWidth: isSelected ? 2 : 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
         }
         .buttonStyle(.plain)
     }

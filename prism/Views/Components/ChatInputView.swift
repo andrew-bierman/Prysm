@@ -16,7 +16,7 @@ struct ChatInputView: View {
     var body: some View {
         VStack(spacing: 0) {
             if useCustomInstructions {
-                HStack(spacing: 4) {
+                HStack(spacing: Spacing.xSmall) {
                     Image(systemName: "wand.and.stars")
                         .font(.caption2)
                     Text("Custom instructions active")
@@ -27,35 +27,33 @@ struct ChatInputView: View {
                 .padding(.bottom, 4)
             }
 
-            HStack(spacing: 12) {
-            TextField("Type your message...", text: $messageText, axis: .vertical)
-                .textFieldStyle(.plain)
-                .lineLimit(1...5)
-                .focused($isTextFieldFocused)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color.gray.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .onSubmit {
-                    sendMessage()
-                }
+            HStack(alignment: .bottom, spacing: Spacing.small) {
+                TextField("Type your message...", text: $messageText, axis: .vertical)
+                    .textFieldStyle(.plain)
+                    .lineLimit(1...5)
+                    .focused($isTextFieldFocused)
+                    .padding(.horizontal, Spacing.medium)
+                    .padding(.vertical, Spacing.small)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Spacing.CornerRadius.xLarge))
+                    .onSubmit {
+                        sendMessage()
+                    }
 #if os(iOS)
-                .submitLabel(.send)
+                    .submitLabel(.send)
 #endif
 
-            Button(action: sendMessage) {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(
-                        messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .gray : Color.accentColor
-                    )
-            }
-            .buttonStyle(.plain)
-            .disabled(
-                messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                chatViewModel.isLoading ||
-                chatViewModel.isSummarizing
-            )
+                Button(action: sendMessage) {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.title2)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .gray : .blue)
+                }
+                .buttonStyle(.plain)
+                .disabled(
+                    messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    chatViewModel.isLoading ||
+                    chatViewModel.isSummarizing
+                )
             }
             .padding()
         }

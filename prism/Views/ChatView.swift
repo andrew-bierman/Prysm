@@ -97,7 +97,7 @@ struct ChatView: View {
     private var messagesView: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 12) {
+                LazyVStack(spacing: Spacing.medium) {
                     ForEach(viewModel.session.transcript) { entry in
                         TranscriptEntryView(entry: entry)
                             .id(entry.id)

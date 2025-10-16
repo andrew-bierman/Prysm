@@ -2,7 +2,7 @@
 //  Spacing.swift
 //  Prism
 //
-//  Based on Foundation-Models-Framework-Example
+//  Clean spacing constants for consistent design
 //
 
 import Foundation

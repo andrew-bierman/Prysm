@@ -33,6 +33,8 @@ struct SettingsView: View {
         .navigationTitle("Settings")
 #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+#else
+        .formStyle(.grouped)
 #endif
         .sheet(isPresented: $showingAbout) {
             AboutView()
@@ -318,7 +320,7 @@ struct AboutView: View {
                                     .foregroundStyle(.blue)
                                     .frame(width: 24)
 
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: Spacing.xSmall) {
                                     Text(feature.title)
                                         .font(.subheadline)
                                         .bold()
@@ -348,9 +350,11 @@ struct AboutView: View {
                 }
             }
             .navigationTitle("About")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         dismiss()
                     }

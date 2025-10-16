@@ -51,8 +51,10 @@ struct WelcomeView: View {
                 )
                 .tag(3)
             }
+#if os(iOS)
             .tabViewStyle(.page)
             .indexViewStyle(.page(backgroundDisplayMode: .always))
+#endif
 
             VStack(spacing: Spacing.medium) {
                 if currentPage < 3 {

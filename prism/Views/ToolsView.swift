@@ -311,7 +311,7 @@ struct CategoryChip: View {
             }
             .padding(.horizontal, Spacing.medium)
             .padding(.vertical, Spacing.small)
-            .background(isSelected ? category.color : Color(.systemGray5))
+            .background(isSelected ? category.color : Color.gray.opacity(0.15))
             .foregroundStyle(isSelected ? .white : .primary)
             .clipShape(Capsule())
         }
@@ -332,7 +332,7 @@ struct ToolCard: View {
                     .foregroundStyle(tool.category.color)
                     .frame(width: 40)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Spacing.xSmall) {
                     HStack {
                         Text(tool.name)
                             .font(.headline)
@@ -340,8 +340,8 @@ struct ToolCard: View {
                         if tool.isPremium {
                             Label("Pro", systemImage: "star.fill")
                                 .font(.caption2)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
+                                .padding(.horizontal, Spacing.small - 2)
+                                .padding(.vertical, Spacing.xSmall / 2)
                                 .background(Color.yellow.opacity(0.2))
                                 .foregroundStyle(.orange)
                                 .clipShape(Capsule())
@@ -361,12 +361,12 @@ struct ToolCard: View {
                     .allowsHitTesting(false)
             }
             .padding()
-            .background(isEnabled ? tool.category.color.opacity(0.1) : Color(.systemBackground))
+            .background(isEnabled ? tool.category.color.opacity(0.1) : Color.clear)
             .overlay(
-                RoundedRectangle(cornerRadius: CornerRadius.medium)
+                RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium)
                     .stroke(isEnabled ? tool.category.color : Color.secondary.opacity(0.2), lineWidth: isEnabled ? 2 : 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
         }
         .buttonStyle(.plain)
     }

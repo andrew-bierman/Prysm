@@ -26,11 +26,11 @@ struct MessageBubbleView: View {
     }
 
     private var messageContent: some View {
-        VStack(alignment: message.isFromUser ? .trailing : .leading, spacing: 4) {
+        VStack(alignment: message.isFromUser ? .trailing : .leading, spacing: Spacing.xSmall) {
             Text(message.content)
                 .textSelection(.enabled)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, Spacing.medium)
+            .padding(.vertical, Spacing.small)
             .background(
                 message.isFromUser ?
                 Color.accentColor : Color.gray.opacity(0.2)
@@ -38,16 +38,16 @@ struct MessageBubbleView: View {
             .foregroundStyle(
                 message.isFromUser ? .white : .primary
             )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
 
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.small) {
                 Text(message.timestamp, style: .relative)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
 
                 if !message.isFromUser, let entryID = message.entryID {
                     // Feedback buttons for AI responses
-                    HStack(spacing: 4) {
+                    HStack(spacing: Spacing.xSmall) {
                         if let sentiment = viewModel.getFeedback(for: entryID) {
                             Image(systemName: sentiment == .positive ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
                                 .font(.caption2)

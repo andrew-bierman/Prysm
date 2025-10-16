@@ -109,9 +109,9 @@ struct ExampleCard: View {
         .padding()
         .frame(maxWidth: .infinity, minHeight: 150)
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
         .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.large)
+            RoundedRectangle(cornerRadius: Spacing.CornerRadius.large)
                 .stroke(example.accentColor.opacity(0.2), lineWidth: 1)
         )
     }
@@ -176,7 +176,9 @@ struct ExampleDetailView: View {
                 }
             }
             .navigationTitle(exampleType.title)
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
@@ -239,7 +241,7 @@ struct ExampleDetailView: View {
         }
         .padding()
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.large))
         .padding()
     }
 
@@ -513,7 +515,7 @@ struct ReviewResultView: View {
                     .font(.title2)
                     .bold()
                 Spacer()
-                HStack(spacing: 2) {
+                HStack(spacing: Spacing.xSmall / 2) {
                     ForEach(1...5, id: \.self) { star in
                         Image(systemName: star <= review.rating ? "star.fill" : "star")
                             .foregroundStyle(.yellow)

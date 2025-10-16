@@ -86,7 +86,7 @@ struct GenerationOptionsView: View {
             }
             .padding()
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
         }
     }
 
@@ -119,7 +119,7 @@ struct GenerationOptionsView: View {
             }
             .padding()
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
         }
     }
 
@@ -155,7 +155,7 @@ struct GenerationOptionsView: View {
             }
             .padding()
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
         }
     }
 
@@ -166,7 +166,7 @@ struct GenerationOptionsView: View {
 
             VStack(spacing: 0) {
                 Toggle(isOn: $streamResponses) {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.xSmall) {
                         Text("Stream Responses")
                             .font(.subheadline)
                         Text("Show responses as they're generated")
@@ -179,7 +179,7 @@ struct GenerationOptionsView: View {
                 Divider()
 
                 Toggle(isOn: $autoSummarize) {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.xSmall) {
                         Text("Auto-Summarize")
                             .font(.subheadline)
                         Text("Automatically summarize long conversations")
@@ -192,7 +192,7 @@ struct GenerationOptionsView: View {
                 Divider()
 
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.xSmall) {
                         Text("Context Window")
                             .font(.subheadline)
                         Text("\(contextWindowSize) tokens")
@@ -208,7 +208,7 @@ struct GenerationOptionsView: View {
                 .padding()
             }
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
         }
     }
 

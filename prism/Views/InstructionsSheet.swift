@@ -42,15 +42,17 @@ struct InstructionsSheet: View {
                 .padding()
             }
             .navigationTitle("Custom Instructions")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         isPresented = false
                     }
                 }
 
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         saveInstructions()
                     }
@@ -79,7 +81,7 @@ struct InstructionsSheet: View {
 
     private var toggleSection: some View {
         Toggle(isOn: $useCustomInstructions) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: Spacing.xSmall) {
                 Text("Enable Custom Instructions")
                     .font(.subheadline)
                 Text("Apply these instructions to all conversations")
@@ -89,7 +91,7 @@ struct InstructionsSheet: View {
         }
         .padding()
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
     }
 
     private var instructionsEditor: some View {
@@ -106,13 +108,13 @@ struct InstructionsSheet: View {
             TextEditor(text: $editingInstructions)
                 .focused($isTextFieldFocused)
                 .font(.body)
-                .padding(8)
+                .padding(Spacing.small)
                 .frame(minHeight: 150)
                 .scrollContentBackground(.hidden)
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+                .background(Color.gray.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CornerRadius.medium)
+                    RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium)
                         .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                 )
         }
@@ -155,7 +157,7 @@ struct InstructionsSheet: View {
                         .padding(Spacing.small)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.accentColor.opacity(0.05))
-                        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.small))
+                        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.small))
                         .lineLimit(3)
                 }
             }
@@ -174,7 +176,7 @@ struct InstructionsSheet: View {
         }
         .padding()
         .background(Color.blue.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.CornerRadius.medium))
     }
 
     private func saveInstructions() {
