@@ -12,16 +12,64 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: $selection) {
-            ForEach(TabSelection.allCases, id: \.self) { tab in
-                NavigationLink(value: tab) {
-                    Label(tab.displayName, systemImage: tab.systemImage)
+            Section {
+                NavigationLink(value: TabSelection.chat) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(TabSelection.chat.displayName)
+                                .font(.body)
+                            Text(TabSelection.chat.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: TabSelection.chat.systemImage)
+                            .symbolRenderingMode(.multicolor)
+                    }
+                }
+            }
+
+            Section("Configuration") {
+                ForEach([TabSelection.assistant, TabSelection.model], id: \.self) { tab in
+                    NavigationLink(value: tab) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(tab.displayName)
+                                    .font(.body)
+                                Text(tab.description)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: tab.systemImage)
+                                .symbolRenderingMode(.multicolor)
+                        }
+                    }
+                }
+            }
+
+            Section {
+                NavigationLink(value: TabSelection.settings) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(TabSelection.settings.displayName)
+                                .font(.body)
+                            Text(TabSelection.settings.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: TabSelection.settings.systemImage)
+                            .symbolRenderingMode(.multicolor)
+                    }
                 }
             }
         }
         .navigationTitle("Prism")
 #if os(macOS)
-        .navigationSplitViewColumnWidth(min: 200, ideal: 250, max: 300)
+        .navigationSplitViewColumnWidth(min: 250, ideal: 280, max: 350)
 #endif
+        .listStyle(.sidebar)
     }
 }
 

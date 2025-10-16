@@ -2,28 +2,25 @@
 //  TabSelection.swift
 //  Prism
 //
-//  Based on Foundation-Models-Framework-Example
+//  Navigation structure for the app
 //
 
 import Foundation
 
 enum TabSelection: String, CaseIterable, Hashable {
     case chat
-    case examples
-    case tools
-    case languages
+    case assistant
+    case model
     case settings
 
     var displayName: String {
         switch self {
         case .chat:
             return "Chat"
-        case .examples:
-            return "Examples"
-        case .tools:
-            return "Tools"
-        case .languages:
-            return "Languages"
+        case .assistant:
+            return "Assistant"
+        case .model:
+            return "Model"
         case .settings:
             return "Settings"
         }
@@ -32,15 +29,26 @@ enum TabSelection: String, CaseIterable, Hashable {
     var systemImage: String {
         switch self {
         case .chat:
-            return "bubble.left.and.bubble.right"
-        case .examples:
-            return "sparkles"
-        case .tools:
-            return "wrench.and.screwdriver"
-        case .languages:
-            return "globe"
+            return "message.fill"
+        case .assistant:
+            return "wand.and.stars"
+        case .model:
+            return "brain"
         case .settings:
-            return "gear"
+            return "gearshape.fill"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .chat:
+            return "Start a conversation"
+        case .assistant:
+            return "Configure AI behavior"
+        case .model:
+            return "Choose language model"
+        case .settings:
+            return "App preferences"
         }
     }
 }

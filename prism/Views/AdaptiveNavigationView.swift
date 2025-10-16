@@ -40,21 +40,15 @@ struct AdaptiveNavigationView: View {
                 }
             }
 
-            Tab(TabSelection.examples.displayName, systemImage: TabSelection.examples.systemImage, value: .examples) {
+            Tab(TabSelection.assistant.displayName, systemImage: TabSelection.assistant.systemImage, value: .assistant) {
                 NavigationStack {
-                    ExamplesView()
+                    AssistantView()
                 }
             }
 
-            Tab(TabSelection.tools.displayName, systemImage: TabSelection.tools.systemImage, value: .tools) {
+            Tab(TabSelection.model.displayName, systemImage: TabSelection.model.systemImage, value: .model) {
                 NavigationStack {
-                    ToolsView()
-                }
-            }
-
-            Tab(TabSelection.languages.displayName, systemImage: TabSelection.languages.systemImage, value: .languages) {
-                NavigationStack {
-                    LanguagesView()
+                    ModelView()
                 }
             }
 
@@ -99,17 +93,13 @@ struct AdaptiveNavigationView: View {
             NavigationStack {
                 ChatView(viewModel: $chatViewModel)
             }
-        case .examples:
+        case .assistant:
             NavigationStack {
-                ExamplesView()
+                AssistantView()
             }
-        case .tools:
+        case .model:
             NavigationStack {
-                ToolsView()
-            }
-        case .languages:
-            NavigationStack {
-                LanguagesView()
+                ModelView()
             }
         case .settings:
             NavigationStack {
