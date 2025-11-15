@@ -1,13 +1,13 @@
 //
-//  PrismUITestsLaunchTests.swift
-//  PrismUITests
+//  PrysmUITestsLaunchTests.swift
+//  PrysmUITests
 //
 //  Created by Andrew Bierman on 10/15/25.
 //
 
 import XCTest
 
-final class PrismUITestsLaunchTests: XCTestCase {
+final class PrysmUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

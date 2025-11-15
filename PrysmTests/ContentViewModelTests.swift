@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import FoundationModels
-@testable import Prism
+@testable import Prysm
 
 @MainActor
 struct ContentViewModelTests {

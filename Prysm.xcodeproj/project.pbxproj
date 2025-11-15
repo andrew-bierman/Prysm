@@ -12,37 +12,37 @@
 			containerPortal = 8FBB75B92EA0209F0066305D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8FBB75C02EA0209F0066305D;
-			remoteInfo = Prism;
+			remoteInfo = Prysm;
 		};
 		8FBB75DB2EA020A10066305D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FBB75B92EA0209F0066305D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8FBB75C02EA0209F0066305D;
-			remoteInfo = Prism;
+			remoteInfo = Prysm;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8FBB75C12EA0209F0066305D /* prism.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = prism.app; path = "Luma AI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBB75D02EA020A10066305D /* PrismTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PrismTests.xctest; path = "Luma AI.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBB75DA2EA020A10066305D /* PrismUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PrismUITests.xctest; path = "Luma AI.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75C12EA0209F0066305D /* Prysm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Prysm.app; path = "Prysm.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75D02EA020A10066305D /* PrysmTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PrysmTests.xctest; path = "Prysm.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FBB75DA2EA020A10066305D /* PrysmUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PrysmUITests.xctest; path = "Prysm.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8FBB75C32EA0209F0066305D /* Prism */ = {
+		8FBB75C32EA0209F0066305D /* Prysm */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Prism;
+			path = Prysm;
 			sourceTree = "<group>";
 		};
-		8FBB75D32EA020A10066305D /* PrismTests */ = {
+		8FBB75D32EA020A10066305D /* PrysmTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PrismTests;
+			path = PrysmTests;
 			sourceTree = "<group>";
 		};
-		8FBB75DD2EA020A10066305D /* PrismUITests */ = {
+		8FBB75DD2EA020A10066305D /* PrysmUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PrismUITests;
+			path = PrysmUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		8FBB75B82EA0209F0066305D = {
 			isa = PBXGroup;
 			children = (
-				8FBB75C32EA0209F0066305D /* Prism */,
-				8FBB75D32EA020A10066305D /* PrismTests */,
-				8FBB75DD2EA020A10066305D /* PrismUITests */,
+				8FBB75C32EA0209F0066305D /* Prysm */,
+				8FBB75D32EA020A10066305D /* PrysmTests */,
+				8FBB75DD2EA020A10066305D /* PrysmUITests */,
 				8FBB75C22EA0209F0066305D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		8FBB75C22EA0209F0066305D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8FBB75C12EA0209F0066305D /* prism.app */,
-				8FBB75D02EA020A10066305D /* PrismTests.xctest */,
-				8FBB75DA2EA020A10066305D /* PrismUITests.xctest */,
+				8FBB75C12EA0209F0066305D /* Prysm.app */,
+				8FBB75D02EA020A10066305D /* PrysmTests.xctest */,
+				8FBB75DA2EA020A10066305D /* PrysmUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8FBB75C02EA0209F0066305D /* Prism */ = {
+		8FBB75C02EA0209F0066305D /* Prysm */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "Prism" */;
+			buildConfigurationList = 8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "Prysm" */;
 			buildPhases = (
 				8FBB75BD2EA0209F0066305D /* Sources */,
 				8FBB75BE2EA0209F0066305D /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8FBB75C32EA0209F0066305D /* Prism */,
+				8FBB75C32EA0209F0066305D /* Prysm */,
 			);
-			name = Prism;
+			name = Prysm;
 			packageProductDependencies = (
 			);
-			productName = Prism;
-			productReference = 8FBB75C12EA0209F0066305D /* prism.app */;
+			productName = Prysm;
+			productReference = 8FBB75C12EA0209F0066305D /* Prysm.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8FBB75CF2EA020A10066305D /* PrismTests */ = {
+		8FBB75CF2EA020A10066305D /* PrysmTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismTests" */;
+			buildConfigurationList = 8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "PrysmTests" */;
 			buildPhases = (
 				8FBB75CC2EA020A10066305D /* Sources */,
 				8FBB75CD2EA020A10066305D /* Frameworks */,
@@ -131,18 +131,18 @@
 				8FBB75D22EA020A10066305D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8FBB75D32EA020A10066305D /* PrismTests */,
+				8FBB75D32EA020A10066305D /* PrysmTests */,
 			);
-			name = PrismTests;
+			name = PrysmTests;
 			packageProductDependencies = (
 			);
-			productName = prismTests;
-			productReference = 8FBB75D02EA020A10066305D /* PrismTests.xctest */;
+			productName = PrysmTests;
+			productReference = 8FBB75D02EA020A10066305D /* PrysmTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		8FBB75D92EA020A10066305D /* PrismUITests */ = {
+		8FBB75D92EA020A10066305D /* PrysmUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismUITests" */;
+			buildConfigurationList = 8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "PrysmUITests" */;
 			buildPhases = (
 				8FBB75D62EA020A10066305D /* Sources */,
 				8FBB75D72EA020A10066305D /* Frameworks */,
@@ -154,13 +154,13 @@
 				8FBB75DC2EA020A10066305D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8FBB75DD2EA020A10066305D /* PrismUITests */,
+				8FBB75DD2EA020A10066305D /* PrysmUITests */,
 			);
-			name = PrismUITests;
+			name = PrysmUITests;
 			packageProductDependencies = (
 			);
-			productName = prismUITests;
-			productReference = 8FBB75DA2EA020A10066305D /* PrismUITests.xctest */;
+			productName = PrysmUITests;
+			productReference = 8FBB75DA2EA020A10066305D /* PrysmUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "Prism" */;
+			buildConfigurationList = 8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "Prysm" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8FBB75C02EA0209F0066305D /* Prism */,
-				8FBB75CF2EA020A10066305D /* PrismTests */,
-				8FBB75D92EA020A10066305D /* PrismUITests */,
+				8FBB75C02EA0209F0066305D /* Prysm */,
+				8FBB75CF2EA020A10066305D /* PrysmTests */,
+				8FBB75D92EA020A10066305D /* PrysmUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		8FBB75D22EA020A10066305D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FBB75C02EA0209F0066305D /* Prism */;
+			target = 8FBB75C02EA0209F0066305D /* Prysm */;
 			targetProxy = 8FBB75D12EA020A10066305D /* PBXContainerItemProxy */;
 		};
 		8FBB75DC2EA020A10066305D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FBB75C02EA0209F0066305D /* Prism */;
+			target = 8FBB75C02EA0209F0066305D /* Prysm */;
 			targetProxy = 8FBB75DB2EA020A10066305D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -407,14 +407,15 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_CFBundleDisplayName = "Prysm";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.luma-ai";
-				PRODUCT_NAME = "Luma AI";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.prysm";
+				PRODUCT_NAME = "Prysm";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -451,14 +452,15 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_CFBundleDisplayName = "Prysm";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.luma-ai";
-				PRODUCT_NAME = "Luma AI";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.prysm";
+				PRODUCT_NAME = "Prysm";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -484,8 +486,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.luma-aiTests";
-				PRODUCT_NAME = "Luma AI";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.prysm";
+				PRODUCT_NAME = "Prysm";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -510,8 +512,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.luma-aiTests";
-				PRODUCT_NAME = "Luma AI";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.prysm";
+				PRODUCT_NAME = "Prysm";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -535,8 +537,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.luma-aiUITests";
-				PRODUCT_NAME = "Luma AI";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.prysm";
+				PRODUCT_NAME = "Prysm";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -545,7 +547,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Prism;
+				TEST_TARGET_NAME = "Prysm";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -560,8 +562,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.luma-aiUITests";
-				PRODUCT_NAME = "Luma AI";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrewbierman.prysm";
+				PRODUCT_NAME = "Prysm";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -570,7 +572,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Prism;
+				TEST_TARGET_NAME = "Prysm";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -578,7 +580,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "Prism" */ = {
+		8FBB75BC2EA0209F0066305D /* Build configuration list for PBXProject "Prysm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75E22EA020A10066305D /* Debug */,
@@ -587,7 +589,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "Prism" */ = {
+		8FBB75E42EA020A10066305D /* Build configuration list for PBXNativeTarget "Prysm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75E52EA020A10066305D /* Debug */,
@@ -596,7 +598,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismTests" */ = {
+		8FBB75E72EA020A10066305D /* Build configuration list for PBXNativeTarget "PrysmTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75E82EA020A10066305D /* Debug */,
@@ -605,7 +607,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "PrismUITests" */ = {
+		8FBB75EA2EA020A10066305D /* Build configuration list for PBXNativeTarget "PrysmUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FBB75EB2EA020A10066305D /* Debug */,

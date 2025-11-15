@@ -38,7 +38,7 @@ struct ExamplesView: View {
                 .font(.title2)
                 .bold()
 
-            Text("Try these examples to see what Prism can do")
+            Text("Try these examples to see what \(AppConfig.appName) can do")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }

@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import SwiftUI
-@testable import Prism
+@testable import Prysm
 
 @MainActor
 struct SettingsTests {

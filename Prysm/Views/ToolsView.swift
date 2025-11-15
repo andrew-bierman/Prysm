@@ -34,7 +34,7 @@ struct ToolsView: View {
                 .font(.title2)
                 .bold()
 
-            Text("Enable tools and integrations to extend Prism's capabilities")
+            Text("Enable tools and integrations to extend \(AppConfig.appName)'s capabilities")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }

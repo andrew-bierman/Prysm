@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import FoundationModels
-@testable import Prism
+@testable import Prysm
 
 @MainActor
 struct ChatViewModelTests {
@@ -177,7 +177,7 @@ struct ChatViewModelTests {
 
         let instructions = viewModel.instructions
 
-        #expect(instructions.contains("You are Prism"))
+        #expect(instructions.contains("You are Luma AI"))
         #expect(instructions.contains("Be concise"))
 
         // Clean up

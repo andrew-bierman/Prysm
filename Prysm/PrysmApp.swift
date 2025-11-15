@@ -1,6 +1,6 @@
 //
-//  PrismApp.swift
-//  Prism
+//  PrysmApp.swift
+//  Prysm
 //
 //  Created by Andrew Bierman on 10/15/25.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import FoundationModels
 
 @main
-struct PrismApp: App {
+struct PrysmApp: App {
     @State private var isModelAvailable = true
     @State private var unavailabilityReason: SystemLanguageModel.Availability.UnavailableReason?
     @State private var showModelUnavailableWarning = false

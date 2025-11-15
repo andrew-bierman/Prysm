@@ -286,11 +286,11 @@ struct AboutView: View {
                             }
                         }
 
-                        Text("Luma AI")
+                        Text(AppConfig.appName)
                             .font(.largeTitle)
                             .bold()
 
-                        Text("Version 1.0.0")
+                        Text(AppConfig.fullVersionString)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -301,7 +301,7 @@ struct AboutView: View {
                         Text("Powered by Apple Intelligence")
                             .font(.headline)
 
-                        Text("Prism brings the power of advanced language models to your fingertips, with a focus on privacy, performance, and ease of use.")
+                        Text("\(AppConfig.appName) brings the power of advanced language models to your fingertips, with a focus on privacy, performance, and ease of use.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -342,7 +342,7 @@ struct AboutView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
-                        Text("© 2024 Prism. All rights reserved.")
+                        Text("© 2024 Luma AI. All rights reserved.")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                     }
