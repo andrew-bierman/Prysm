@@ -29,16 +29,16 @@ struct MessageBubbleView: View {
         VStack(alignment: message.isFromUser ? .trailing : .leading, spacing: Spacing.xSmall) {
             Text(message.content)
                 .textSelection(.enabled)
-            .padding(.horizontal, Spacing.medium)
-            .padding(.vertical, Spacing.small)
-            .background(
-                message.isFromUser ?
-                Color.accentColor : Color.gray.opacity(0.2)
-            )
-            .foregroundStyle(
-                message.isFromUser ? .white : .primary
-            )
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
+                .padding(.horizontal, Spacing.medium)
+                .padding(.vertical, Spacing.small)
+                .background(
+                    message.isFromUser ?
+                    Color.accentColor : Color.gray.opacity(0.2)
+                )
+                .foregroundStyle(
+                    message.isFromUser ? .white : .primary
+                )
+                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))
 
             HStack(spacing: Spacing.small) {
                 Text(message.timestamp, style: .relative)
