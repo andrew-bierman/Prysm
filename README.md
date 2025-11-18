@@ -21,12 +21,13 @@ Prism is a state-of-the-art demonstration of Apple's FoundationModels framework,
 
 ### 🚀 Core Capabilities
 
-- **AI-Powered Chat** - Integration with SystemLanguageModel for intelligent conversations
+- **AI-Powered Chat** - Integration with FoundationModels for intelligent conversations
 - **Streaming Responses** - Real-time message streaming with typing indicators
-- **Custom Tools** - Extensible tool system (Weather, Calculator, Web Search)
-- **Structured Output** - @Generable support for recipes, code analysis, and travel planning
-- **SwiftData Persistence** - Local storage with CloudKit sync capabilities
-- **Export/Import** - Multiple format support (JSON, Markdown, Plain Text, CSV)
+- **Structured Output** - @Generable support for recipes, books, travel planning, stories, business ideas, emails, and product reviews
+- **Context Management** - Automatic sliding window and conversation summarization
+- **Custom Instructions** - Personalize AI behavior with custom system prompts
+- **Onboarding Flow** - Interactive welcome experience for new users
+- **Token Tracking** - Real-time token count estimation for context awareness
 
 ### 🎨 Platform-Adaptive Design
 
@@ -59,7 +60,7 @@ Prism is a state-of-the-art demonstration of Apple's FoundationModels framework,
 
 ## Requirements
 
-- **Xcode 16.0+** (Beta)
+- **Xcode 16.0+**
 - **Swift 6.0+**
 - **Deployment Targets:**
   - iOS 18.0+
@@ -67,41 +68,59 @@ Prism is a state-of-the-art demonstration of Apple's FoundationModels framework,
   - macOS 15.0+
   - visionOS 2.0+
 
-> **Note:** This project is designed for Apple's FoundationModels framework. The FoundationModels imports and @Generable macros are currently commented out to allow the project to compile. They can be enabled once the framework becomes available.
-
 ## Project Structure
 
 ```
-Prism/
-├── Prism/                      # Main app target
-│   ├── PrismApp.swift         # App entry point with platform configs
-│   ├── ContentView.swift      # Root content view
-│   ├── Item.swift            # SwiftData model
-│   ├── Shared/               # Shared code across platforms
-│   │   ├── Models/
-│   │   │   ├── Message.swift           # Chat message model
-│   │   │   ├── GenerableExamples.swift # @Generable structs
-│   │   │   └── CustomTools.swift       # Tool implementations
-│   │   ├── ViewModels/
-│   │   │   ├── ChatViewModel.swift     # Main chat logic
-│   │   │   └── SimpleChatViewModel.swift # Simplified version
-│   │   └── Views/
-│   │       ├── ChatView.swift          # Main chat interface
-│   │       ├── SettingsView.swift      # Settings panel
-│   │       ├── SimpleChatView.swift    # Simplified chat view
-│   │       └── Components/
-│   │           └── MessageBubble.swift # Message display component
+Prysm/
+├── Prysm/                          # Main app target
+│   ├── PrysmApp.swift              # App entry point with platform configs
+│   ├── Constants/
+│   │   ├── AppConfig.swift         # Centralized app configuration
+│   │   └── Spacing.swift           # Design system constants
+│   ├── Models/
+│   │   ├── ChatMessage.swift       # Chat message model
+│   │   ├── ConversationSummary.swift # @Generable for summarization
+│   │   ├── DataModels.swift        # All @Generable structs
+│   │   ├── ExampleType.swift       # Example categories enum
+│   │   ├── FoundationModelsError.swift # Error handling
+│   │   ├── NavigationCoordinator.swift # Navigation state
+│   │   └── TabSelection.swift      # Tab navigation enum
+│   ├── ViewModels/
+│   │   ├── ChatViewModel.swift     # Main chat logic with streaming
+│   │   └── ContentViewModel.swift  # Structured content generation
+│   ├── Views/
+│   │   ├── AdaptiveNavigationView.swift # Platform-adaptive navigation
+│   │   ├── AssistantView.swift     # Assistant configuration hub
+│   │   ├── ChatView.swift          # Main chat interface
+│   │   ├── ExamplesView.swift      # Examples showcase
+│   │   ├── GenerationOptionsView.swift # Model parameters
+│   │   ├── InstructionsSheet.swift # Custom instructions
+│   │   ├── LanguagesView.swift     # Language/model selection
+│   │   ├── ModelView.swift         # Model configuration hub
+│   │   ├── ModelUnavailableView.swift # Error state view
+│   │   ├── SettingsView.swift      # App settings
+│   │   ├── SidebarView.swift       # macOS/iPad sidebar
+│   │   ├── ToolsView.swift         # Tools showcase (UI catalog)
+│   │   ├── TranscriptEntryView.swift # Message display
+│   │   ├── WelcomeView.swift       # Onboarding flow
+│   │   └── Components/
+│   │       ├── ChatInputView.swift # Message input field
+│   │       └── MessageBubbleView.swift # Message bubbles
 │   ├── Extensions/
-│   │   ├── View+Extensions.swift       # View modifiers
-│   │   ├── Platform+Extensions.swift   # Platform helpers
-│   │   └── Color+Extensions.swift      # Color system
-│   └── Assets.xcassets/               # Images and colors
-├── PrismTests/                # Unit tests
+│   │   ├── Color+Extensions.swift  # Color utilities
+│   │   └── Transcript+TokenCounting.swift # Token estimation
+│   ├── Utilities/
+│   │   └── IconGenerator.swift     # Icon generation utility
+│   └── Assets.xcassets/            # Images and app icons
+├── PrysmTests/                     # Unit tests
 │   ├── ChatViewModelTests.swift
-│   ├── MessageTests.swift
-│   ├── CustomToolsTests.swift
-│   └── ViewTests.swift
-└── PrismUITests/             # UI tests
+│   ├── ContentViewModelTests.swift
+│   ├── PrysmTests.swift
+│   ├── SettingsTests.swift
+│   └── UIComponentTests.swift
+├── PrysmUITests/                   # UI tests
+└── Scripts/
+    └── generate_sf_icon.swift      # Icon generation script
 ```
 
 ## Getting Started
@@ -141,42 +160,46 @@ The app uses a modern MVVM architecture with Swift's @Observable macro:
 ```swift
 @Observable
 final class ChatViewModel {
-    var messages: [Message] = []
-    var isResponding = false
-    var currentError: ChatError?
+    var isLoading = false
+    var isSummarizing = false
+    var sessionCount = 0
+    var baseInstructions = ""
+    var errorMessage: String?
     // ...
 }
 ```
 
-### SwiftData Integration
+### FoundationModels Integration
 
-Messages are persisted using SwiftData with CloudKit sync:
+Chat messages leverage the FoundationModels Transcript system for context management:
 
 ```swift
-@Model
-final class Message: Sendable {
+struct ChatMessage: Sendable, Identifiable {
     let id: UUID
-    var content: String
-    var role: MessageRole
+    let entryID: UUID
+    var content: AttributedString
+    var isFromUser: Bool
     var timestamp: Date
-    // ...
+    var isContextSummary: Bool
 }
 ```
 
-### Custom Tools
+### @Generable Structured Output
 
-Extend functionality with custom tools conforming to the Tool protocol:
+Create structured content with type-safe @Generable structs:
 
 ```swift
-struct WeatherTool: Tool {
-    static let name = "get_weather"
+@Generable
+struct Recipe: Sendable {
+    @Guide("The name of the recipe")
+    var name: String
 
-    @Generable
-    struct Arguments: Sendable {
-        var location: String
-        var units: TemperatureUnit = .celsius
-    }
-    // ...
+    var cuisine: String
+    var difficulty: RecipeDifficulty
+    var prepTimeMinutes: Int
+    var servings: Int
+    var ingredients: [String]
+    var instructions: [String]
 }
 ```
 
@@ -186,48 +209,79 @@ struct WeatherTool: Tool {
 
 ```swift
 func sendMessage(_ content: String) async {
-    let userMessage = Message(content: content, role: .user)
-    messages.append(userMessage)
+    guard !content.isEmpty else { return }
 
-    if settings.streamResponses {
-        await streamResponse(for: content)
-    } else {
-        await generateResponse(for: content)
+    isLoading = true
+    defer { isLoading = false }
+
+    do {
+        for try await chunk in session.generateResponse(
+            to: [.user(content)]
+        ) {
+            // Stream response in real-time
+        }
+    } catch {
+        errorMessage = error.localizedDescription
     }
 }
 ```
 
-### Export Functionality
+### Structured Content Generation
 
 ```swift
-func exportConversation(format: ExportFormat) -> URL? {
-    switch format {
-    case .json:
-        return exportAsJSON()
-    case .markdown:
-        return exportAsMarkdown()
-    case .plainText:
-        return exportAsPlainText()
-    case .csv:
-        return exportAsCSV()
+func generateRecipe(prompt: String) async {
+    isLoading = true
+    defer { isLoading = false }
+
+    do {
+        generatedRecipe = try await session.generate(
+            prompt: prompt,
+            as: Recipe.self
+        )
+    } catch {
+        errorMessage = error.localizedDescription
     }
+}
+```
+
+### Context Management
+
+```swift
+func applySlidingWindow() async {
+    guard let session = session else { return }
+
+    isApplyingWindow = true
+    defer { isApplyingWindow = false }
+
+    // Automatically manage context window
+    try? await session.applySlidingWindow(
+        maxPrecedingTokens: 4000
+    )
 }
 ```
 
 ### Platform Adaptations
 
 ```swift
-struct ChatView: View {
+struct AdaptiveNavigationView: View {
     var body: some View {
-        #if os(macOS)
-        NavigationSplitView {
-            // Sidebar content
-        } detail: {
-            // Main content
+        #if os(iOS)
+        if horizontalSizeClass == .compact {
+            TabView(selection: $coordinator.selectedTab) {
+                // iPhone: Tab-based navigation
+            }
+        } else {
+            NavigationSplitView {
+                SidebarView()
+            } detail: {
+                // iPad: Split view navigation
+            }
         }
         #else
-        NavigationStack {
-            // Mobile layout
+        NavigationSplitView {
+            SidebarView()
+        } detail: {
+            // macOS: Split view navigation
         }
         #endif
     }
@@ -238,18 +292,19 @@ struct ChatView: View {
 
 The project includes comprehensive test coverage:
 
-- **85+ ChatViewModel tests** - Message handling, settings, export/import
-- **70+ Message tests** - Model creation, persistence, role conversions
-- **60+ Tool tests** - Weather, calculator, and search functionality
-- **50+ View tests** - UI components, interactions, accessibility
+- **ChatViewModelTests** - Message handling, streaming, context management
+- **ContentViewModelTests** - Structured content generation for all @Generable types
+- **SettingsTests** - App configuration and preferences
+- **UIComponentTests** - View components, interactions, and accessibility
+- **PrysmTests** - General app functionality
 
 Run tests with:
 ```bash
 # All tests
-cmd+U in Xcode
+⌘U in Xcode
 
 # Specific test suite
-Select test file → cmd+U
+Select test file → ⌘U
 ```
 
 ## Keyboard Shortcuts (macOS)
@@ -266,15 +321,15 @@ Select test file → cmd+U
 ## Settings
 
 ### Model Configuration
-- **Temperature** (0.0-2.0) - Controls response creativity
-- **Top P** (0.0-1.0) - Nucleus sampling parameter
-- **Max Tokens** - Maximum response length
+- **Language & Model Selection** - Choose from available system language models
+- **Generation Parameters** - Fine-tune temperature, top P, and max tokens
+- **Custom Instructions** - Personalize AI behavior with system prompts
 
-### Use Cases
-Pre-configured settings for different scenarios:
-- General, Creative Writing, Code Assistant
-- Academic Research, Business Analysis
-- Technical Documentation, Educational Tutor
+### App Settings
+- **Appearance** - Light, dark, or system theme
+- **Chat Settings** - Streaming preferences and context management
+- **Privacy** - Data handling and usage controls
+- **Accessibility** - Dynamic type and accessibility features
 
 ## Contributing
 
@@ -288,14 +343,28 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Roadmap
 
-- [ ] Implement actual FoundationModels integration when available
-- [ ] Add more @Generable examples
-- [ ] Enhance visionOS immersive experiences
-- [ ] Add more export formats (PDF, RTF)
-- [ ] Implement conversation branching
-- [ ] Add voice input/output
-- [ ] Create widget extensions
-- [ ] Add Shortcuts integration
+### ✅ Completed
+- [x] FoundationModels framework integration with streaming
+- [x] 8 @Generable structured output types (Recipe, Book, Travel, Story, Business, Email, Review, Summary)
+- [x] Platform-adaptive UI for iOS, iPadOS, macOS, and visionOS
+- [x] Context management with automatic sliding window and summarization
+- [x] Custom instructions for personalized AI behavior
+- [x] Interactive onboarding and welcome flow
+- [x] Real-time token tracking and context awareness
+- [x] Comprehensive test suite coverage
+- [x] Published to App Store
+
+### 🚧 In Progress / Planned
+- [ ] Conversation persistence (SwiftData + CloudKit sync)
+- [ ] Export/import functionality (JSON, Markdown, PDF)
+- [ ] Custom tool implementations (Web Search, Calculator, etc.)
+- [ ] Enhanced visionOS immersive experiences
+- [ ] Conversation branching and history management
+- [ ] Voice input/output capabilities
+- [ ] Widget extensions for quick access
+- [ ] Shortcuts integration
+- [ ] Multi-conversation management
+- [ ] Image generation integration
 
 ## Acknowledgments
 
@@ -315,4 +384,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Note:** This project is a demonstration of Apple's FoundationModels framework capabilities. The framework is currently in development and not yet publicly available. The code structure and API usage are based on anticipated framework design patterns.
+**Note:** Prysm is built on Apple's FoundationModels framework, showcasing the power of on-device AI with Swift 6 and SwiftUI. The app demonstrates structured content generation, streaming conversations, and intelligent context management—all running locally on your Apple devices.
