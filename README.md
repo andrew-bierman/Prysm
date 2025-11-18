@@ -1,14 +1,21 @@
-# Prism 🌈
+<div align="center">
+  <img src="AppIcon.png" alt="Prysm Logo" width="200"/>
 
-A cutting-edge multiplatform SwiftUI application showcasing Apple's FoundationModels framework with production-ready architecture and comprehensive test coverage.
+  # Prism 🌈
 
-![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
-![Platforms](https://img.shields.io/badge/Platforms-iOS%20%7C%20iPadOS%20%7C%20macOS%20%7C%20visionOS-blue.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+  A cutting-edge multiplatform SwiftUI application showcasing Apple's FoundationModels framework with production-ready architecture and comprehensive test coverage.
+
+  [![Download on the App Store](https://img.shields.io/badge/App%20Store-Download-blue.svg)](https://apps.apple.com/us/app/prysm-ai/id6754121721)
+  ![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
+  ![Platforms](https://img.shields.io/badge/Platforms-iOS%20%7C%20iPadOS%20%7C%20macOS%20%7C%20visionOS-blue.svg)
+  ![License](https://img.shields.io/badge/License-MIT-green.svg)
+</div>
 
 ## Overview
 
 Prism is a state-of-the-art demonstration of Apple's FoundationModels framework, built with Swift 6 and SwiftUI. It provides a sophisticated chat interface with AI-powered conversations, featuring platform-adaptive designs that feel native on iOS, iPadOS, macOS, and visionOS.
+
+**[Download on the App Store](https://apps.apple.com/us/app/prysm-ai/id6754121721)**
 
 ## Features
 
@@ -101,8 +108,8 @@ Prism/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/prism.git
-   cd prism
+   git clone https://github.com/andrew-bierman/Prysm.git
+   cd Prysm
    ```
 
 2. **Open in Xcode**
@@ -300,11 +307,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contact
+## Links
 
-Your Name - [@yourhandle](https://twitter.com/yourhandle)
+**App Store**: [Download Prysm AI](https://apps.apple.com/us/app/prysm-ai/id6754121721)
 
-Project Link: [https://github.com/yourusername/prism](https://github.com/yourusername/prism)
+**GitHub**: [https://github.com/andrew-bierman/Prysm](https://github.com/andrew-bierman/Prysm)
 
 ---
 
