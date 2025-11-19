@@ -47,8 +47,9 @@ enum AppConfig {
 
     // MARK: - Feature Flags
 
-    /// Whether to show premium features
-    static let showPremiumFeatures = true
+    /// Whether to show pro features (Cloud Pro Model, pro tools, etc.)
+    /// Set to false to hide all pro features that don't exist yet
+    static let showProFeatures = false
 
     /// Whether to enable developer mode options
     static let enableDeveloperMode = false
@@ -87,7 +88,7 @@ enum AppConfig {
     Beautiful, native experience optimized for iPhone, iPad, and Mac with support for light/dark modes and customizable themes.
 
     ● No Subscription Required
-    Core features are completely free with no ads or tracking. Optional premium features enhance your experience.
+    Core features are completely free with no ads or tracking. Optional pro features enhance your experience.
 
     ● Examples Library
     Get inspired with curated prompts and templates across categories like productivity, creativity, learning, and entertainment.

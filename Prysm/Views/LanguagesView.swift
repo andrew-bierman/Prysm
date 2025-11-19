@@ -89,7 +89,7 @@ struct LanguagesView: View {
         // Simulate checking for available models
         // In a real app, this would query the FoundationModels framework
         await MainActor.run {
-            availableModels = [
+            var models = [
                 LanguageModelInfo(
                     id: "default",
                     name: "On-Device Model",
@@ -97,17 +97,25 @@ struct LanguagesView: View {
                     capabilities: ["Fast responses", "Privacy-focused", "Offline capable"],
                     icon: "cpu",
                     accentColor: .blue
-                ),
-                LanguageModelInfo(
-                    id: "cloudPro",
-                    name: "Cloud Pro Model",
-                    description: "Advanced cloud-based model for complex tasks",
-                    capabilities: ["Internet access", "Latest information", "Extended context"],
-                    icon: "cloud.fill",
-                    accentColor: .purple,
-                    isPremium: true
                 )
             ]
+
+            // Only show pro model if pro features are enabled
+            if AppConfig.showProFeatures {
+                models.append(
+                    LanguageModelInfo(
+                        id: "cloudPro",
+                        name: "Cloud Pro Model",
+                        description: "Advanced cloud-based model for complex tasks",
+                        capabilities: ["Internet access", "Latest information", "Extended context"],
+                        icon: "cloud.fill",
+                        accentColor: .purple,
+                        isPro: true
+                    )
+                )
+            }
+
+            availableModels = models
             isCheckingModels = false
         }
     }
@@ -120,7 +128,7 @@ struct LanguageModelInfo: Identifiable {
     let capabilities: [String]
     let icon: String
     let accentColor: Color
-    var isPremium: Bool = false
+    var isPro: Bool = false
 }
 
 struct ModelCard: View {
@@ -144,8 +152,8 @@ struct ModelCard: View {
                             .foregroundStyle(.green)
                     }
 
-                    if model.isPremium {
-                        Label("Premium", systemImage: "star.fill")
+                    if model.isPro {
+                        Label("Pro", systemImage: "star.fill")
                             .font(.caption)
                             .padding(.horizontal, Spacing.small)
                             .padding(.vertical, Spacing.xSmall)

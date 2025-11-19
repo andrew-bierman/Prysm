@@ -107,7 +107,7 @@ struct UIComponentTests {
             description: "A tool for testing",
             icon: "wrench",
             category: .development,
-            isPremium: false
+            isPro: false
         )
 
         #expect(tool.id == "testTool")
@@ -115,18 +115,18 @@ struct UIComponentTests {
         #expect(tool.description == "A tool for testing")
         #expect(tool.icon == "wrench")
         #expect(tool.category == .development)
-        #expect(tool.isPremium == false)
+        #expect(tool.isPro == false)
 
-        // Test premium tool
-        let premiumTool = ToolItem(
-            id: "premiumTool",
-            name: "Premium Tool",
-            description: "A premium tool",
+        // Test pro tool
+        let proTool = ToolItem(
+            id: "proTool",
+            name: "Pro Tool",
+            description: "A pro tool",
             icon: "star",
             category: .creativity,
-            isPremium: true
+            isPro: true
         )
-        #expect(premiumTool.isPremium == true)
+        #expect(proTool.isPro == true)
     }
 
     @Test("Language model info properties")
@@ -138,7 +138,7 @@ struct UIComponentTests {
             capabilities: ["Cap1", "Cap2", "Cap3"],
             icon: "brain",
             accentColor: .blue,
-            isPremium: false
+            isPro: false
         )
 
         #expect(model.id == "testModel")
@@ -148,7 +148,7 @@ struct UIComponentTests {
         #expect(model.capabilities.contains("Cap1"))
         #expect(model.icon == "brain")
         #expect(model.accentColor == .blue)
-        #expect(model.isPremium == false)
+        #expect(model.isPro == false)
     }
 }
 
@@ -248,12 +248,12 @@ extension UIComponentTests {
         #expect(!developmentTools.isEmpty)
         #expect(!communicationTools.isEmpty)
 
-        // Check for premium vs free tools
-        let premiumTools = allTools.filter { $0.isPremium }
-        let freeTools = allTools.filter { !$0.isPremium }
+        // Check for pro vs free tools
+        let proTools = allTools.filter { $0.isPro }
+        let freeTools = allTools.filter { !$0.isPro }
 
-        #expect(!premiumTools.isEmpty)
+        #expect(!proTools.isEmpty)
         #expect(!freeTools.isEmpty)
-        #expect(freeTools.count > premiumTools.count) // Most tools should be free
+        #expect(freeTools.count > proTools.count) // Most tools should be free
     }
 }

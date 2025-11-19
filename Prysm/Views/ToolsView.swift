@@ -71,7 +71,17 @@ struct ToolsView: View {
     }
 
     private var filteredTools: [ToolItem] {
-        ToolItem.allTools.filter { $0.category == selectedCategory }
+        ToolItem.allTools.filter { tool in
+            // Filter by category
+            guard tool.category == selectedCategory else { return false }
+
+            // Hide pro tools if feature flag is disabled
+            if tool.isPro && !AppConfig.showProFeatures {
+                return false
+            }
+
+            return true
+        }
     }
 
     private func toggleTool(_ tool: ToolItem) {
@@ -121,7 +131,7 @@ struct ToolItem: Identifiable {
     let description: String
     let icon: String
     let category: ToolCategory
-    let isPremium: Bool
+    let isPro: Bool
 
     static let allTools = [
         // Productivity
@@ -131,7 +141,7 @@ struct ToolItem: Identifiable {
             description: "Automatically summarize long texts and documents",
             icon: "doc.text.magnifyingglass",
             category: .productivity,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "taskManager",
@@ -139,7 +149,7 @@ struct ToolItem: Identifiable {
             description: "Create and manage to-do lists and reminders",
             icon: "checklist",
             category: .productivity,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "noteOrganizer",
@@ -147,7 +157,7 @@ struct ToolItem: Identifiable {
             description: "Organize and categorize your notes automatically",
             icon: "folder.fill",
             category: .productivity,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "webSearch",
@@ -155,7 +165,7 @@ struct ToolItem: Identifiable {
             description: "Search the web for real-time information",
             icon: "globe.badge.chevron.backward",
             category: .productivity,
-            isPremium: true
+            isPro: true
         ),
 
         // Creativity
@@ -165,7 +175,7 @@ struct ToolItem: Identifiable {
             description: "Generate creative image descriptions and concepts",
             icon: "photo.fill",
             category: .creativity,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "imageCreator",
@@ -173,7 +183,7 @@ struct ToolItem: Identifiable {
             description: "Create actual images from text descriptions (requires cloud)",
             icon: "photo.badge.plus.fill",
             category: .creativity,
-            isPremium: true
+            isPro: true
         ),
         ToolItem(
             id: "storyBuilder",
@@ -181,7 +191,7 @@ struct ToolItem: Identifiable {
             description: "Build complex narratives with character tracking",
             icon: "book.fill",
             category: .creativity,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "musicComposer",
@@ -189,7 +199,7 @@ struct ToolItem: Identifiable {
             description: "Generate song lyrics and poetry",
             icon: "music.note",
             category: .creativity,
-            isPremium: false
+            isPro: false
         ),
 
         // Research
@@ -199,7 +209,7 @@ struct ToolItem: Identifiable {
             description: "Access current information from the internet",
             icon: "magnifyingglass.circle.fill",
             category: .research,
-            isPremium: true
+            isPro: true
         ),
         ToolItem(
             id: "factChecker",
@@ -207,7 +217,7 @@ struct ToolItem: Identifiable {
             description: "Verify information and check sources",
             icon: "checkmark.shield.fill",
             category: .research,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "citationHelper",
@@ -215,7 +225,7 @@ struct ToolItem: Identifiable {
             description: "Format citations in various academic styles",
             icon: "quote.opening",
             category: .research,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "dataAnalyzer",
@@ -223,7 +233,7 @@ struct ToolItem: Identifiable {
             description: "Analyze and visualize data patterns",
             icon: "chart.bar.fill",
             category: .research,
-            isPremium: false
+            isPro: false
         ),
 
         // Development
@@ -233,7 +243,7 @@ struct ToolItem: Identifiable {
             description: "Connect to GitHub for code management",
             icon: "cloud.fill",
             category: .development,
-            isPremium: true
+            isPro: true
         ),
         ToolItem(
             id: "codeFormatter",
@@ -241,7 +251,7 @@ struct ToolItem: Identifiable {
             description: "Format and beautify code in multiple languages",
             icon: "curlybraces",
             category: .development,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "debugHelper",
@@ -249,7 +259,7 @@ struct ToolItem: Identifiable {
             description: "Help identify and fix code issues",
             icon: "ant.fill",
             category: .development,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "apiTester",
@@ -257,7 +267,7 @@ struct ToolItem: Identifiable {
             description: "Test and document API endpoints",
             icon: "network",
             category: .development,
-            isPremium: false
+            isPro: false
         ),
 
         // Communication
@@ -267,7 +277,7 @@ struct ToolItem: Identifiable {
             description: "Translate between multiple languages",
             icon: "globe",
             category: .communication,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "voiceTranscription",
@@ -275,7 +285,7 @@ struct ToolItem: Identifiable {
             description: "Advanced voice-to-text with cloud accuracy",
             icon: "mic.badge.plus",
             category: .communication,
-            isPremium: true
+            isPro: true
         ),
         ToolItem(
             id: "toneAdjuster",
@@ -283,7 +293,7 @@ struct ToolItem: Identifiable {
             description: "Adjust message tone for different audiences",
             icon: "slider.horizontal.3",
             category: .communication,
-            isPremium: false
+            isPro: false
         ),
         ToolItem(
             id: "speechWriter",
@@ -291,7 +301,7 @@ struct ToolItem: Identifiable {
             description: "Create compelling speeches and presentations",
             icon: "mic.fill",
             category: .communication,
-            isPremium: false
+            isPro: false
         )
     ]
 }
@@ -337,7 +347,7 @@ struct ToolCard: View {
                         Text(tool.name)
                             .font(.headline)
 
-                        if tool.isPremium {
+                        if tool.isPro {
                             Label("Pro", systemImage: "star.fill")
                                 .font(.caption2)
                                 .padding(.horizontal, Spacing.small - 2)
