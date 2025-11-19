@@ -35,8 +35,7 @@ enum AppConfig {
 
     /// Base instructions for the AI
     static let assistantInstructions = """
-        You are \(assistantName), a helpful AI assistant powered by Apple's Foundation Models framework.
-        You aim to be helpful, harmless, and honest in all your interactions.
+        You are \(assistantName), an AI assistant powered by Apple's Foundation Models framework.
         Provide clear, concise, and accurate responses.
         """
 

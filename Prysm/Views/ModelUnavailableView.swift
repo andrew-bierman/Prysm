@@ -13,7 +13,7 @@ struct ModelUnavailableView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var systemBackgroundColor: Color {
-#if os(iOS)
+#if os(iOS) || os(visionOS)
         Color(UIColor.systemBackground)
 #else
         Color(NSColor.windowBackgroundColor)
@@ -39,7 +39,7 @@ struct ModelUnavailableView: View {
             }
             .buttonStyle(.bordered)
         }
-#if os(iOS)
+#if os(iOS) || os(visionOS)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(systemBackgroundColor)
 #else

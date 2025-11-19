@@ -17,6 +17,7 @@ struct SettingsView: View {
     @AppStorage("enableNotifications") private var enableNotifications = true
     @AppStorage("enableSoundEffects") private var enableSoundEffects = true
     @AppStorage("fontSize") private var fontSize = "medium"
+    @AppStorage("useBaseInstructions") private var useBaseInstructions = true
     @State private var showingResetAlert = false
     @State private var showingAbout = false
 
@@ -90,7 +91,8 @@ struct SettingsView: View {
     }
 
     private var chatSection: some View {
-        Section("Chat") {
+        Section {
+            Toggle("Use Base System Instructions", isOn: $useBaseInstructions)
             Toggle("Auto-save Conversations", isOn: $autoSaveConversations)
             Toggle("Show Word Count", isOn: $showWordCount)
             Toggle("Enable Haptic Feedback", isOn: $enableHaptics)
@@ -98,6 +100,12 @@ struct SettingsView: View {
 
             NavigationLink(destination: GenerationOptionsView()) {
                 Label("Generation Options", systemImage: "slider.horizontal.3")
+            }
+        } header: {
+            Text("Chat")
+        } footer: {
+            if !useBaseInstructions {
+                Text("Base system instructions are disabled. The AI will have no predefined behavior constraints.")
             }
         }
     }
@@ -224,6 +232,7 @@ struct SettingsView: View {
         enableNotifications = true
         enableSoundEffects = true
         fontSize = "medium"
+        useBaseInstructions = true
     }
 
     private func clearConversationHistory() {

@@ -21,12 +21,21 @@ final class ChatViewModel {
     var baseInstructions: String = AppConfig.assistantInstructions
 
     var instructions: String {
-        var fullInstructions = baseInstructions
+        var fullInstructions = ""
+
+        // Only use base instructions if enabled
+        let useBaseInstructions = UserDefaults.standard.object(forKey: "useBaseInstructions") as? Bool ?? true
+        if useBaseInstructions {
+            fullInstructions = baseInstructions
+        }
 
         // Add custom instructions if enabled
         if UserDefaults.standard.bool(forKey: "useCustomInstructions") {
             if let customInstructions = UserDefaults.standard.string(forKey: "customInstructions"), !customInstructions.isEmpty {
-                fullInstructions += "\n\nUser's custom instructions:\n" + customInstructions
+                if !fullInstructions.isEmpty {
+                    fullInstructions += "\n\n"
+                }
+                fullInstructions += "User's custom instructions:\n" + customInstructions
             }
         }
 

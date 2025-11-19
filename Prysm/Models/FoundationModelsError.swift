@@ -38,8 +38,8 @@ struct FoundationModelsErrorHandler: Sendable {
             return "Context window exceeded: \(context.debugDescription)"
         case .assetsUnavailable(let context):
             return "Model assets unavailable: \(context.debugDescription)"
-        case .guardrailViolation(let context):
-            return "Content policy violation: \(context.debugDescription)"
+        case .guardrailViolation:
+            return "The model's built-in safety guardrails prevented this response. Try rephrasing your request or disable base system instructions in Settings."
         case .decodingFailure(let context):
             return "Failed to decode response: \(context.debugDescription)"
         case .unsupportedGuide(let context):
@@ -50,8 +50,8 @@ struct FoundationModelsErrorHandler: Sendable {
             return "Rate limited: \(context.debugDescription)"
         case .concurrentRequests(let context):
             return "Too many concurrent requests: \(context.debugDescription)"
-        case .refusal(_, let context):
-            return "Model refused to respond: \(context.debugDescription)"
+        case .refusal:
+            return "The model declined to respond to this request. Try rephrasing or adjusting the system instructions in Settings."
         @unknown default:
             return "Unknown generation error"
         }
