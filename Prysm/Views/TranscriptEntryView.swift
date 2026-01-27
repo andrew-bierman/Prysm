@@ -14,13 +14,13 @@ struct TranscriptEntryView: View {
     var body: some View {
         switch entry {
         case .prompt(let prompt):
-            if let text = extractText(from: prompt.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: text, isFromUser: true))
+            if let attributedText = extractAttributedText(from: prompt.segments), !attributedText.string.isEmpty {
+                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: attributedText, isFromUser: true))
             }
 
         case .response(let response):
-            if let text = extractText(from: response.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: text, isFromUser: false))
+            if let attributedText = extractAttributedText(from: response.segments), !attributedText.string.isEmpty {
+                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: attributedText, isFromUser: false))
             }
 
         case .instructions:
@@ -31,7 +31,7 @@ struct TranscriptEntryView: View {
         }
     }
 
-    private func extractText(from segments: [Transcript.Segment]) -> String? {
+    private func extractAttributedText(from segments: [Transcript.Segment]) -> AttributedString? {
         let text = segments.compactMap { segment in
             if case .text(let textSegment) = segment {
                 return textSegment.content
@@ -39,6 +39,8 @@ struct TranscriptEntryView: View {
             return nil
         }.joined(separator: " ")
 
-        return text.isEmpty ? nil : text
+        guard !text.isEmpty else { return nil }
+
+        return MarkdownRenderer.renderMarkdown(text)
     }
 }
