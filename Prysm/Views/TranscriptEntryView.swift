@@ -15,12 +15,12 @@ struct TranscriptEntryView: View {
         switch entry {
         case .prompt(let prompt):
             if let text = extractText(from: prompt.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: text, isFromUser: true))
+                MessageBubbleView(message: ChatMessage(content: text, isFromUser: true))
             }
 
         case .response(let response):
             if let text = extractText(from: response.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: text, isFromUser: false))
+                MessageBubbleView(message: ChatMessage(content: text, isFromUser: false))
             }
 
         case .instructions:
@@ -42,3 +42,25 @@ struct TranscriptEntryView: View {
         return text.isEmpty ? nil : text
     }
 }
+
+#if canImport(Markdown)
+import Markdown
+
+struct MarkdownTextView: View {
+    let content: String
+
+    var body: some View {
+        Markdown(content: content)
+            .textSelection(.enabled)
+    }
+}
+#else
+struct MarkdownTextView: View {
+    let content: String
+
+    var body: some View {
+        Text(content)
+            .textSelection(.enabled)
+    }
+}
+#endif

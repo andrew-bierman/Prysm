@@ -27,10 +27,10 @@ struct MessageBubbleView: View {
 
     private var messageContent: some View {
         VStack(alignment: message.isFromUser ? .trailing : .leading, spacing: Spacing.xSmall) {
-            Text(message.content)
-                .textSelection(.enabled)
+            MarkdownTextView(content: String(describing: message.content))
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.small)
+                .frame(maxWidth: .infinity, alignment: message.isFromUser ? .trailing : .leading)
                 .background(
                     message.isFromUser ?
                     Color.accentColor : Color.gray.opacity(0.2)
