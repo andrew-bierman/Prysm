@@ -76,7 +76,7 @@ enum AppConfig {
     KEY FEATURES:
 
     ● Private & Secure
-    All processing happens on-device using Apple's Foundation Models framework. Your conversations never leave your device, ensuring complete privacy.
+    On-device processing using Apple's Foundation Models framework. When using on-device models, conversations stay on your device. Remote API connections send data to external servers.
 
     ● Smart Conversations
     Engage in natural, contextual conversations with an AI that understands nuance and can help with a wide variety of tasks.
@@ -88,7 +88,7 @@ enum AppConfig {
     Beautiful, native experience optimized for iPhone, iPad, and Mac with support for light/dark modes and customizable themes.
 
     ● No Subscription Required
-    Core features are completely free with no ads or tracking. Optional pro features enhance your experience.
+    Completely free with no subscriptions, no ads, and no tracking.
 
     ● Examples Library
     Get inspired with curated prompts and templates across categories like productivity, creativity, learning, and entertainment.
@@ -100,7 +100,7 @@ enum AppConfig {
     • Business professionals
     • Anyone curious about AI
 
-    Prysm AI respects your privacy while delivering powerful AI capabilities. No account required, no data collection, just pure AI assistance when you need it.
+    Prysm AI respects your privacy while delivering powerful AI capabilities. No account required, just pure AI assistance when you need it.
 
     Built with SwiftUI and powered by Apple Intelligence, Prysm AI represents the future of on-device AI assistance.
     """
@@ -137,7 +137,7 @@ enum AppConfig {
         "Creative Content Tools",
         "Complete Privacy",
         "Beautiful Dark Mode",
-        "Cross-Platform Sync"
+        "Works on iPhone, iPad & Mac"
     ]
 
     /// App preview video script (30 seconds max)
