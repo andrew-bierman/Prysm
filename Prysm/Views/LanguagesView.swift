@@ -115,6 +115,18 @@ struct LanguagesView: View {
                 )
             }
 
+            // Always show remote option
+            models.append(
+                LanguageModelInfo(
+                    id: "remote",
+                    name: "Remote API",
+                    description: "Connect to LM Studio, Ollama, OpenAI, or any compatible server",
+                    capabilities: ["Custom models", "Any size model", "OpenAI compatible"],
+                    icon: "network",
+                    accentColor: .purple
+                )
+            )
+
             availableModels = models
             isCheckingModels = false
         }

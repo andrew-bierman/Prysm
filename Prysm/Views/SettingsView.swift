@@ -25,6 +25,7 @@ struct SettingsView: View {
         Form {
             appearanceSection
             chatSection
+            remoteAPISection
             privacySection
             accessibilitySection
             notificationsSection
@@ -106,6 +107,22 @@ struct SettingsView: View {
         } footer: {
             if !useBaseInstructions {
                 Text("Base system instructions are disabled. The AI will have no predefined behavior constraints.")
+            }
+        }
+    }
+
+    private var remoteAPISection: some View {
+        Section("Remote API") {
+            NavigationLink(destination: Text("Configure in Model tab")) {
+                Label("Remote API Settings", systemImage: "network")
+            }
+
+            HStack {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(.secondary)
+                Text("Connect to LM Studio, Ollama, OpenAI, or any compatible API")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
