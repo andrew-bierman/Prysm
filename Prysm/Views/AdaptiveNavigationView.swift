@@ -59,7 +59,7 @@ struct AdaptiveNavigationView: View {
             .tag(TabSelection.model)
 
             NavigationStack {
-                SettingsView()
+                SettingsView(chatViewModel: $chatViewModel)
             }
             .tabItem {
                 Label(TabSelection.settings.displayName, systemImage: TabSelection.settings.systemImage)
@@ -110,7 +110,7 @@ struct AdaptiveNavigationView: View {
             }
         case .settings:
             NavigationStack {
-                SettingsView()
+                SettingsView(chatViewModel: $chatViewModel)
             }
         }
     }

@@ -24,7 +24,7 @@ enum RemoteProviderError: LocalizedError {
 
 // MARK: - RemoteProviderConfig
 
-struct RemoteProviderConfig: Codable, Equatable {
+struct RemoteProviderConfig: Codable, Equatable, Sendable {
     var baseURL: String = "http://localhost:1234"
     var apiKey: String = ""
     var modelName: String = "default"
@@ -54,7 +54,7 @@ final class RemoteProvider: LLMProvider {
             && !config.baseURL.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
-    init(config: RemoteProviderConfig = RemoteProviderConfig()) {
+    init(config: RemoteProviderConfig) {
         self.config = config
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = 120
@@ -69,10 +69,11 @@ final class RemoteProvider: LLMProvider {
     ) -> AsyncThrowingStream<String, Error> {
         let providerConfig = self.config
         let session = self.urlSession
+        let completionsURL = providerConfig.chatCompletionsURL
 
         return AsyncThrowingStream { continuation in
             let task = Task.detached {
-                guard let url = providerConfig.chatCompletionsURL else {
+                guard let url = completionsURL else {
                     continuation.finish(throwing: RemoteProviderError.invalidURL)
                     return
                 }
@@ -94,7 +95,7 @@ final class RemoteProvider: LLMProvider {
                 messages.append(["role": "user", "content": content])
 
                 // Build request body
-                var body: [String: Any] = [
+                let body: [String: Any] = [
                     "model": providerConfig.modelName,
                     "messages": messages,
                     "temperature": config.temperature,

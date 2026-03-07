@@ -9,6 +9,7 @@ import SwiftUI
 import FoundationModels
 
 struct SettingsView: View {
+    @Binding var chatViewModel: ChatViewModel
     @AppStorage("autoSaveConversations") private var autoSaveConversations = true
     @AppStorage("enableHaptics") private var enableHaptics = true
     @AppStorage("showWordCount") private var showWordCount = false
@@ -113,7 +114,7 @@ struct SettingsView: View {
 
     private var remoteAPISection: some View {
         Section("Remote API") {
-            NavigationLink(destination: Text("Configure in Model tab")) {
+            NavigationLink(destination: RemoteAPISettingsView(viewModel: $chatViewModel)) {
                 Label("Remote API Settings", systemImage: "network")
             }
 
@@ -403,6 +404,6 @@ struct AboutView: View {
 
 #Preview {
     NavigationStack {
-        SettingsView()
+        SettingsView(chatViewModel: .constant(ChatViewModel()))
     }
 }
