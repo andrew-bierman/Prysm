@@ -1,173 +1,53 @@
 //
 //  ChatViewModelTests.swift
-//  PrismTests
+//  PrysmTests
 //
-//  Testing the ChatViewModel
+//  Testing the ChatViewModel with provider-based architecture
 //
 
 import Testing
 import Foundation
-import FoundationModels
 @testable import Prysm
 
 @MainActor
 struct ChatViewModelTests {
 
     @Test("ViewModel initializes correctly")
-    func testViewModelInitialization() async {
+    func testInitialization() async {
         let viewModel = ChatViewModel()
 
-        #expect(viewModel.entries.isEmpty)
+        #expect(viewModel.messages.isEmpty)
         #expect(!viewModel.isLoading)
-        #expect(!viewModel.isSummarizing)
-        #expect(viewModel.currentError == nil)
-        #expect(viewModel.conversationId != nil)
+        #expect(!viewModel.isStreaming)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.showError)
+        #expect(viewModel.streamingContent.isEmpty)
     }
 
-    @Test("Send message adds entries correctly")
-    func testSendMessage() async {
-        let viewModel = ChatViewModel()
-        let testMessage = "Hello, test"
-
-        // Mock sending message (would normally interact with model)
-        viewModel.entries.append(Transcript.Entry(role: .user, content: testMessage))
-
-        #expect(viewModel.entries.count == 1)
-        #expect(viewModel.entries.first?.content == testMessage)
-        #expect(viewModel.entries.first?.role == .user)
-    }
-
-    @Test("Clear conversation removes all entries")
-    func testClearConversation() async {
+    @Test("Clear chat removes all messages")
+    func testClearChat() async {
         let viewModel = ChatViewModel()
 
-        // Add test entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Test 1"))
-        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Response 1"))
+        // Add messages manually
+        viewModel.messages.append(LLMMessage(role: .user, content: "Hello"))
+        viewModel.messages.append(LLMMessage(role: .assistant, content: "Hi there!"))
 
-        #expect(viewModel.entries.count == 2)
+        #expect(viewModel.messages.count == 2)
 
-        // Clear conversation
-        viewModel.clearConversation()
+        viewModel.clearChat()
 
-        #expect(viewModel.entries.isEmpty)
-        #expect(viewModel.conversationId != nil) // Should have new ID
+        #expect(viewModel.messages.isEmpty)
     }
 
-    @Test("Delete entry at index works correctly")
-    func testDeleteEntry() async {
+    @Test("Base instructions default to AppConfig.assistantInstructions")
+    func testInstructions() async {
         let viewModel = ChatViewModel()
 
-        // Add test entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Message 1"))
-        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Response 1"))
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Message 2"))
-
-        #expect(viewModel.entries.count == 3)
-
-        // Delete middle entry
-        viewModel.deleteEntry(at: 1)
-
-        #expect(viewModel.entries.count == 2)
-        #expect(viewModel.entries[0].content == "Message 1")
-        #expect(viewModel.entries[1].content == "Message 2")
+        #expect(viewModel.baseInstructions == AppConfig.assistantInstructions)
+        #expect(viewModel.instructions.contains(AppConfig.assistantInstructions))
     }
 
-    @Test("Retry last message removes assistant response")
-    func testRetryLastMessage() async {
-        let viewModel = ChatViewModel()
-
-        // Add entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "User message"))
-        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Assistant response"))
-
-        // Find last user message
-        if let lastUserIndex = viewModel.entries.lastIndex(where: { $0.role == .user }) {
-            // Remove all entries after the last user message
-            viewModel.entries.removeLast(viewModel.entries.count - lastUserIndex - 1)
-        }
-
-        #expect(viewModel.entries.count == 1)
-        #expect(viewModel.entries.last?.role == .user)
-    }
-
-    @Test("Export conversation to JSON format")
-    func testExportJSON() async throws {
-        let viewModel = ChatViewModel()
-
-        // Add test entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Hello"))
-        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Hi there!"))
-
-        let exportData = viewModel.exportConversation(format: .json)
-
-        #expect(exportData != nil)
-
-        if let data = exportData {
-            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-            #expect(json != nil)
-            #expect(json?["messageCount"] as? Int == 2)
-        }
-    }
-
-    @Test("Export conversation to Markdown format")
-    func testExportMarkdown() async {
-        let viewModel = ChatViewModel()
-
-        // Add test entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Test message"))
-        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Test response"))
-
-        let exportData = viewModel.exportConversation(format: .markdown)
-
-        #expect(exportData != nil)
-
-        if let data = exportData,
-           let markdown = String(data: data, encoding: .utf8) {
-            #expect(markdown.contains("# Conversation"))
-            #expect(markdown.contains("## User"))
-            #expect(markdown.contains("## Assistant"))
-            #expect(markdown.contains("Test message"))
-            #expect(markdown.contains("Test response"))
-        }
-    }
-
-    @Test("Export conversation to plain text format")
-    func testExportPlainText() async {
-        let viewModel = ChatViewModel()
-
-        // Add test entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Plain text test"))
-
-        let exportData = viewModel.exportConversation(format: .plainText)
-
-        #expect(exportData != nil)
-
-        if let data = exportData,
-           let text = String(data: data, encoding: .utf8) {
-            #expect(text.contains("USER: Plain text test"))
-        }
-    }
-
-    @Test("Export conversation to CSV format")
-    func testExportCSV() async {
-        let viewModel = ChatViewModel()
-
-        // Add test entries
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "CSV test"))
-
-        let exportData = viewModel.exportConversation(format: .csv)
-
-        #expect(exportData != nil)
-
-        if let data = exportData,
-           let csv = String(data: data, encoding: .utf8) {
-            #expect(csv.contains("Timestamp,Role,Content"))
-            #expect(csv.contains("\"user\",\"CSV test\""))
-        }
-    }
-
-    @Test("Custom instructions are included in prompt")
+    @Test("Custom instructions are included when enabled")
     func testCustomInstructions() async {
         let viewModel = ChatViewModel()
 
@@ -177,7 +57,7 @@ struct ChatViewModelTests {
 
         let instructions = viewModel.instructions
 
-        #expect(instructions.contains("You are Luma AI"))
+        #expect(instructions.contains(AppConfig.assistantInstructions))
         #expect(instructions.contains("Be concise"))
 
         // Clean up
@@ -185,112 +65,148 @@ struct ChatViewModelTests {
         UserDefaults.standard.removeObject(forKey: "customInstructions")
     }
 
-    @Test("Conversation title generation")
-    func testConversationTitle() async {
+    @Test("Remote config persistence updates provider")
+    func testRemoteConfigPersistence() async {
         let viewModel = ChatViewModel()
 
-        // Empty conversation
-        #expect(viewModel.conversationTitle == "New Conversation")
+        let config = RemoteProviderConfig(
+            baseURL: "https://api.example.com",
+            apiKey: "test-key-123",
+            modelName: "gpt-4",
+            organizationID: "org-123"
+        )
 
-        // Add user message
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "This is a test message"))
+        viewModel.updateRemoteConfig(config)
 
-        let title = viewModel.conversationTitle
-        #expect(title != "New Conversation")
-        #expect(title == "This is a test message")
+        #expect(viewModel.remoteProvider.config.baseURL == "https://api.example.com")
+        #expect(viewModel.remoteProvider.config.modelName == "gpt-4")
+        #expect(viewModel.remoteProvider.config.organizationID == "org-123")
 
-        // Test truncation with long message
-        viewModel.entries.removeAll()
-        let longMessage = String(repeating: "A", count: 100)
-        viewModel.entries.append(Transcript.Entry(role: .user, content: longMessage))
+        // Verify UserDefaults persistence
+        #expect(UserDefaults.standard.string(forKey: "remoteBaseURL") == "https://api.example.com")
+        #expect(UserDefaults.standard.string(forKey: "remoteModelName") == "gpt-4")
+        #expect(UserDefaults.standard.string(forKey: "remoteOrganizationID") == "org-123")
 
-        let truncatedTitle = viewModel.conversationTitle
-        #expect(truncatedTitle.count <= 50)
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "remoteBaseURL")
+        UserDefaults.standard.removeObject(forKey: "remoteModelName")
+        UserDefaults.standard.removeObject(forKey: "remoteOrganizationID")
+        KeychainHelper.delete(key: "remoteAPIKey")
     }
 
-    @Test("Has messages computed property")
-    func testHasMessages() async {
+    @Test("Dismiss error clears error state")
+    func testDismissError() async {
         let viewModel = ChatViewModel()
 
-        #expect(!viewModel.hasMessages)
+        viewModel.errorMessage = "Something went wrong"
+        viewModel.showError = true
 
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Test"))
+        #expect(viewModel.showError)
+        #expect(viewModel.errorMessage == "Something went wrong")
 
-        #expect(viewModel.hasMessages)
+        viewModel.dismissError()
+
+        #expect(!viewModel.showError)
+        #expect(viewModel.errorMessage == nil)
     }
 
-    @Test("Last entry computed property")
-    func testLastEntry() async {
+    @Test("isUsingRemote defaults to false")
+    func testIsUsingRemote() async {
+        // Ensure the key is not set to "remote"
+        let saved = UserDefaults.standard.string(forKey: "selectedLanguageModel")
+        UserDefaults.standard.set("default", forKey: "selectedLanguageModel")
+
         let viewModel = ChatViewModel()
 
-        #expect(viewModel.lastEntry == nil)
+        #expect(!viewModel.isUsingRemote)
 
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "First"))
-        #expect(viewModel.lastEntry?.content == "First")
-
-        viewModel.entries.append(Transcript.Entry(role: .assistant, content: "Second"))
-        #expect(viewModel.lastEntry?.content == "Second")
+        // Restore
+        if let saved = saved {
+            UserDefaults.standard.set(saved, forKey: "selectedLanguageModel")
+        } else {
+            UserDefaults.standard.removeObject(forKey: "selectedLanguageModel")
+        }
     }
 
-    @Test("Can send message when not loading")
-    func testCanSendMessage() async {
+    @Test("Update instructions changes base instructions")
+    func testUpdateInstructions() async {
         let viewModel = ChatViewModel()
 
-        #expect(viewModel.canSendMessage)
+        let newInstructions = "You are a helpful coding assistant."
+        viewModel.updateInstructions(newInstructions)
 
-        viewModel.isLoading = true
-        #expect(!viewModel.canSendMessage)
-
-        viewModel.isLoading = false
-        #expect(viewModel.canSendMessage)
+        #expect(viewModel.baseInstructions == newInstructions)
     }
 
-    @Test("Error handling")
-    func testErrorHandling() async {
+    @Test("Generation config reads from UserDefaults")
+    func testGenerationConfig() async {
+        UserDefaults.standard.set(0.9, forKey: "temperature")
+        UserDefaults.standard.set(0.85, forKey: "topP")
+        UserDefaults.standard.set(4096, forKey: "maxTokens")
+        UserDefaults.standard.set(false, forKey: "streamResponses")
+
         let viewModel = ChatViewModel()
+        let config = viewModel.generationConfig
 
-        #expect(viewModel.currentError == nil)
+        #expect(config.temperature == 0.9)
+        #expect(config.topP == 0.85)
+        #expect(config.maxTokens == 4096)
+        #expect(config.stream == false)
 
-        viewModel.currentError = "Test error"
-        #expect(viewModel.currentError == "Test error")
-
-        viewModel.clearError()
-        #expect(viewModel.currentError == nil)
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "temperature")
+        UserDefaults.standard.removeObject(forKey: "topP")
+        UserDefaults.standard.removeObject(forKey: "maxTokens")
+        UserDefaults.standard.removeObject(forKey: "streamResponses")
     }
 }
 
-// MARK: - Performance Tests
+// MARK: - LLMMessage Tests
 
 extension ChatViewModelTests {
-    @Test("Performance: Add many entries")
-    func testPerformanceAddManyEntries() async {
-        let viewModel = ChatViewModel()
 
-        for i in 0..<100 {
-            let entry = Transcript.Entry(
-                role: i % 2 == 0 ? .user : .assistant,
-                content: "Message \(i)"
-            )
-            viewModel.entries.append(entry)
-        }
+    @Test("LLMMessage initializes with correct properties")
+    func testLLMMessageInit() {
+        let message = LLMMessage(role: .user, content: "Hello")
 
-        #expect(viewModel.entries.count == 100)
+        #expect(message.role == .user)
+        #expect(message.content == "Hello")
+        #expect(message.id != UUID()) // Has a unique ID
     }
 
-    @Test("Performance: Export large conversation")
-    func testPerformanceExportLargeConversation() async {
-        let viewModel = ChatViewModel()
+    @Test("LLMMessage roles are distinct")
+    func testLLMMessageRoles() {
+        let system = LLMMessage(role: .system, content: "System prompt")
+        let user = LLMMessage(role: .user, content: "User message")
+        let assistant = LLMMessage(role: .assistant, content: "Assistant response")
 
-        // Add many entries
-        for i in 0..<50 {
-            let entry = Transcript.Entry(
-                role: i % 2 == 0 ? .user : .assistant,
-                content: "Test message \(i) with some content to make it more realistic"
-            )
-            viewModel.entries.append(entry)
-        }
+        #expect(system.role == .system)
+        #expect(user.role == .user)
+        #expect(assistant.role == .assistant)
+        #expect(system.role != user.role)
+    }
 
-        let exportData = viewModel.exportConversation(format: .json)
-        #expect(exportData != nil)
+    @Test("LLMMessage equality is based on id")
+    func testLLMMessageEquality() {
+        let msg1 = LLMMessage(role: .user, content: "Hello")
+        let msg2 = LLMMessage(role: .user, content: "Hello")
+
+        // Two separately created messages should not be equal (different UUIDs)
+        #expect(msg1 != msg2)
+    }
+}
+
+// MARK: - GenerationConfig Tests
+
+extension ChatViewModelTests {
+
+    @Test("GenerationConfig defaults")
+    func testGenerationConfigDefaults() {
+        let config = GenerationConfig()
+
+        #expect(config.temperature == 0.7)
+        #expect(config.topP == 0.95)
+        #expect(config.maxTokens == 2048)
+        #expect(config.stream == true)
     }
 }
