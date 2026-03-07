@@ -1,45 +1,30 @@
 //
 //  TranscriptEntryView.swift
-//  Prism
-//
-//  Based on Foundation-Models-Framework-Example
+//  Prysm
 //
 
 import SwiftUI
-import FoundationModels
 
-struct TranscriptEntryView: View {
-    let entry: Transcript.Entry
+struct MessageView: View {
+    let message: LLMMessage
 
     var body: some View {
-        switch entry {
-        case .prompt(let prompt):
-            if let text = extractText(from: prompt.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(content: text, isFromUser: true))
-            }
-
-        case .response(let response):
-            if let text = extractText(from: response.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(content: text, isFromUser: false))
-            }
-
-        case .instructions:
-            EmptyView()
-
-        default:
+        switch message.role {
+        case .user:
+            MessageBubbleView(
+                content: message.content,
+                isFromUser: true,
+                timestamp: message.timestamp
+            )
+        case .assistant:
+            MessageBubbleView(
+                content: message.content,
+                isFromUser: false,
+                timestamp: message.timestamp
+            )
+        case .system:
             EmptyView()
         }
-    }
-
-    private func extractText(from segments: [Transcript.Segment]) -> String? {
-        let text = segments.compactMap { segment in
-            if case .text(let textSegment) = segment {
-                return textSegment.content
-            }
-            return nil
-        }.joined(separator: " ")
-
-        return text.isEmpty ? nil : text
     }
 }
 
@@ -48,7 +33,6 @@ import Markdown
 
 struct MarkdownTextView: View {
     let content: String
-
     var body: some View {
         Markdown(content: content)
             .textSelection(.enabled)
@@ -57,7 +41,6 @@ struct MarkdownTextView: View {
 #else
 struct MarkdownTextView: View {
     let content: String
-
     var body: some View {
         Text(content)
             .textSelection(.enabled)

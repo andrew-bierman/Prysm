@@ -1,16 +1,15 @@
 //
 //  ChatInputView.swift
-//  Prism
-//
-//  Based on Foundation-Models-Framework-Example
+//  Prysm
 //
 
 import SwiftUI
 
 struct ChatInputView: View {
     @Binding var messageText: String
-    @Environment(ChatViewModel.self) var chatViewModel
+    let isLoading: Bool
     @FocusState.Binding var isTextFieldFocused: Bool
+    let onSend: (String) -> Void
     @AppStorage("useCustomInstructions") private var useCustomInstructions = false
 
     var body: some View {
@@ -49,8 +48,7 @@ struct ChatInputView: View {
                     .buttonStyle(.plain)
                     .disabled(
                         messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                        chatViewModel.isLoading ||
-                        chatViewModel.isSummarizing
+                        isLoading
                     )
                 }
                 .padding(Spacing.small)
@@ -64,12 +62,8 @@ struct ChatInputView: View {
     private func sendMessage() {
         let trimmedMessage = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedMessage.isEmpty else { return }
-
         messageText = ""
         isTextFieldFocused = true
-
-        Task {
-            await chatViewModel.sendMessage(trimmedMessage)
-        }
+        onSend(trimmedMessage)
     }
 }
