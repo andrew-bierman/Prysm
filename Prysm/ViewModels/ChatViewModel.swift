@@ -1,37 +1,44 @@
 //
 //  ChatViewModel.swift
-//  Prism
+//  Prysm
 //
-//  Based on Foundation-Models-Framework-Example
+//  Refactored to use LLMProvider protocol for multi-provider support.
 //
 
 import Foundation
-import FoundationModels
 import Observation
 
 @Observable
+@MainActor
 final class ChatViewModel {
 
-    // MARK: - Published Properties
+    // MARK: - Message History
+
+    var messages: [LLMMessage] = []
+
+    // MARK: - State
 
     var isLoading: Bool = false
-    var isSummarizing: Bool = false
-    var isApplyingWindow: Bool = false
-    var sessionCount: Int = 1
+    var isStreaming: Bool = false
+    var streamingContent: String = ""
+    var errorMessage: String?
+    var showError: Bool = false
+
+    // MARK: - Instructions
+
     var baseInstructions: String = AppConfig.assistantInstructions
 
     var instructions: String {
         var fullInstructions = ""
 
-        // Only use base instructions if enabled
         let useBaseInstructions = UserDefaults.standard.object(forKey: "useBaseInstructions") as? Bool ?? true
         if useBaseInstructions {
             fullInstructions = baseInstructions
         }
 
-        // Add custom instructions if enabled
         if UserDefaults.standard.bool(forKey: "useCustomInstructions") {
-            if let customInstructions = UserDefaults.standard.string(forKey: "customInstructions"), !customInstructions.isEmpty {
+            if let customInstructions = UserDefaults.standard.string(forKey: "customInstructions"),
+               !customInstructions.isEmpty {
                 if !fullInstructions.isEmpty {
                     fullInstructions += "\n\n"
                 }
@@ -41,255 +48,143 @@ final class ChatViewModel {
 
         return fullInstructions
     }
-    var errorMessage: String?
-    var showError: Bool = false
 
-    // MARK: - Public Properties
+    // MARK: - Providers
 
-    private(set) var session: LanguageModelSession
+    private(set) var onDeviceProvider: OnDeviceProvider
+    private(set) var remoteProvider: RemoteProvider
 
-    // MARK: - Feedback State
+    var isUsingRemote: Bool {
+        UserDefaults.standard.string(forKey: "selectedLanguageModel") == "remote"
+    }
 
-    private(set) var feedbackState: [Transcript.Entry.ID: LanguageModelFeedback.Sentiment] = [:]
+    var currentProvider: any LLMProvider {
+        isUsingRemote ? remoteProvider : onDeviceProvider
+    }
 
-    // MARK: - Sliding Window Configuration
-    private let maxTokens = 4096
-    private let windowThreshold = 0.75
-    private let targetWindowSize = 2000
+    // MARK: - Generation Config
+
+    var generationConfig: GenerationConfig {
+        let temperature = UserDefaults.standard.object(forKey: "temperature") as? Double ?? 0.7
+        let topP = UserDefaults.standard.object(forKey: "topP") as? Double ?? 0.95
+        let maxTokens = UserDefaults.standard.object(forKey: "maxTokens") as? Int ?? 2048
+        let stream = UserDefaults.standard.object(forKey: "streamResponses") as? Bool ?? true
+        return GenerationConfig(
+            temperature: temperature,
+            topP: topP,
+            maxTokens: maxTokens,
+            stream: stream
+        )
+    }
 
     // MARK: - Initialization
 
     init() {
-        self.session = LanguageModelSession(
-            instructions: Instructions(
-                AppConfig.assistantInstructions
-            )
+        self.onDeviceProvider = OnDeviceProvider(systemPrompt: AppConfig.assistantInstructions)
+
+        // Load saved remote config from UserDefaults + Keychain
+        let baseURL = UserDefaults.standard.string(forKey: "remoteBaseURL") ?? "http://localhost:1234"
+        let modelName = UserDefaults.standard.string(forKey: "remoteModelName") ?? "default"
+        let apiKey = KeychainHelper.load(key: "remoteAPIKey") ?? ""
+        let organizationID = UserDefaults.standard.string(forKey: "remoteOrganizationID") ?? ""
+
+        let remoteConfig = RemoteProviderConfig(
+            baseURL: baseURL,
+            apiKey: apiKey,
+            modelName: modelName,
+            organizationID: organizationID
         )
+        self.remoteProvider = RemoteProvider(config: remoteConfig)
     }
 
     // MARK: - Public Methods
 
-    @MainActor
     func sendMessage(_ content: String) async {
-        isLoading = session.isResponding
+        let userMessage = LLMMessage(role: .user, content: content)
+        messages.append(userMessage)
+
+        // Create a placeholder assistant message for streaming
+        let assistantPlaceholder = LLMMessage(role: .assistant, content: "")
+        messages.append(assistantPlaceholder)
+        let assistantIndex = messages.count - 1
+        let assistantID = assistantPlaceholder.id
+
+        isLoading = true
+        isStreaming = true
+        streamingContent = ""
 
         do {
-            // Check if we need to apply sliding window BEFORE sending
-            if shouldApplyWindow() {
-                await applySlidingWindow()
+            // Build history from all messages except the last user message and placeholder
+            let history = Array(messages.dropLast(2))
+
+            let stream = currentProvider.sendMessage(
+                content,
+                history: history,
+                systemPrompt: instructions,
+                config: generationConfig
+            )
+
+            var accumulated = ""
+            for try await delta in stream {
+                accumulated += delta
+                streamingContent = accumulated
+
+                // Replace the placeholder message with updated content
+                messages[assistantIndex] = LLMMessage(role: .assistant, content: accumulated)
             }
 
-            // Stream response from current session
-            let responseStream = session.streamResponse(to: Prompt(content))
-
-            for try await _ in responseStream {
-                // The streaming automatically updates the session transcript
+            // Final update — ensure content is set even if stream ended without deltas
+            if messages[assistantIndex].content.isEmpty && !accumulated.isEmpty {
+                messages[assistantIndex] = LLMMessage(role: .assistant, content: accumulated)
             }
-
-        } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
-            // Fallback: Handle context window exceeded by summarizing and creating new session
-            await handleContextWindowExceeded(userMessage: content)
 
         } catch {
-            // Handle other errors by showing an error message
-            errorMessage = handleFoundationModelsError(error)
+            // Remove the empty placeholder if streaming failed before producing content
+            if messages.count > assistantIndex,
+               messages[assistantIndex].id == assistantID,
+               messages[assistantIndex].content.isEmpty {
+                messages.remove(at: assistantIndex)
+            }
+
+            errorMessage = error.localizedDescription
             showError = true
         }
 
-        isLoading = session.isResponding
+        isLoading = false
+        isStreaming = false
+        streamingContent = ""
     }
 
-    @MainActor
-    func submitFeedback(for entryID: Transcript.Entry.ID, sentiment: LanguageModelFeedback.Sentiment) {
-        // Store the feedback state
-        feedbackState[entryID] = sentiment
-
-        // Use the new session method to log feedback attachment
-        _ = session.logFeedbackAttachment(sentiment: sentiment)
-    }
-
-    @MainActor
-    func getFeedback(for entryID: Transcript.Entry.ID) -> LanguageModelFeedback.Sentiment? {
-        return feedbackState[entryID]
-    }
-
-    @MainActor
     func clearChat() {
-        sessionCount = 1
-        feedbackState.removeAll()
-        session = LanguageModelSession(
-            instructions: Instructions(instructions)
-        )
+        messages.removeAll()
+        onDeviceProvider.resetSession(systemPrompt: instructions)
     }
 
-    @MainActor
     func updateInstructions(_ newInstructions: String) {
         baseInstructions = newInstructions
-        session = LanguageModelSession(
-            instructions: Instructions(instructions)
-        )
+        onDeviceProvider.resetSession(systemPrompt: instructions)
     }
 
-    @MainActor
     func refreshSession() {
-        // Refresh the session with potentially updated custom instructions
-        session = LanguageModelSession(
-            instructions: Instructions(instructions)
-        )
+        onDeviceProvider.resetSession(systemPrompt: instructions)
     }
 
-    // MARK: - Sliding Window Implementation
+    func updateRemoteConfig(_ config: RemoteProviderConfig) {
+        remoteProvider.config = config
 
-    private func shouldApplyWindow() -> Bool {
-        return session.transcript.isApproachingLimit(threshold: windowThreshold, maxTokens: maxTokens)
-    }
+        // Persist non-sensitive values to UserDefaults
+        UserDefaults.standard.set(config.baseURL, forKey: "remoteBaseURL")
+        UserDefaults.standard.set(config.modelName, forKey: "remoteModelName")
+        UserDefaults.standard.set(config.organizationID, forKey: "remoteOrganizationID")
 
-    @MainActor
-    private func applySlidingWindow() async {
-        isApplyingWindow = true
-
-        // Get entries that fit within our target window size
-        let windowEntries = session.transcript.entriesWithinTokenBudget(targetWindowSize)
-
-        // Always preserve instructions at the beginning
-        var finalEntries = windowEntries
-        if let instructions = session.transcript.first(where: {
-            if case .instructions = $0 { return true }
-            return false
-        }) {
-            if !finalEntries.contains(where: { $0.id == instructions.id }) {
-                finalEntries.insert(instructions, at: 0)
-            }
-        }
-
-        // Create new session with updated instructions
-        // Since we can't create a Transcript directly with entries,
-        // we'll create a new session and rebuild the transcript
-        session = LanguageModelSession(instructions: Instructions(instructions))
-
-        sessionCount += 1
-
-        isApplyingWindow = false
-    }
-
-    // MARK: - Private Methods (Existing)
-
-    private func handleFoundationModelsError(_ error: Error) -> String {
-        if let generationError = error as? LanguageModelSession.GenerationError {
-            return FoundationModelsErrorHandler.handleGenerationError(generationError)
-        } else if let toolCallError = error as? LanguageModelSession.ToolCallError {
-            return FoundationModelsErrorHandler.handleToolCallError(toolCallError)
-        } else if let customError = error as? FoundationModelsError {
-            return customError.localizedDescription
+        // Persist API key to Keychain
+        if !config.apiKey.isEmpty {
+            _ = KeychainHelper.save(key: "remoteAPIKey", value: config.apiKey)
         } else {
-            return "Error: \(error)"
+            KeychainHelper.delete(key: "remoteAPIKey")
         }
     }
 
-    @MainActor
-    private func handleContextWindowExceeded(userMessage: String) async {
-        isSummarizing = true
-
-        do {
-            let summary = try await generateConversationSummary()
-            createNewSessionWithContext(summary: summary)
-            isSummarizing = false
-
-            try await respondWithNewSession(to: userMessage)
-        } catch {
-            handleSummarizationError(error)
-            errorMessage = handleFoundationModelsError(error)
-            showError = true
-        }
-    }
-
-    private func createConversationText() -> String {
-        return session.transcript.compactMap { entry in
-            switch entry {
-            case .prompt(let prompt):
-                let text = prompt.segments.compactMap { segment in
-                    if case .text(let textSegment) = segment {
-                        return textSegment.content
-                    }
-                    return nil
-                }.joined(separator: " ")
-                return "User: \(text)"
-            case .response(let response):
-                let text = response.segments.compactMap { segment in
-                    if case .text(let textSegment) = segment {
-                        return textSegment.content
-                    }
-                    return nil
-                }.joined(separator: " ")
-                return "Assistant: \(text)"
-            default:
-                return nil
-            }
-        }.joined(separator: "\n\n")
-    }
-
-    @MainActor
-    private func generateConversationSummary() async throws -> ConversationSummary {
-        let summarySession = LanguageModelSession(
-            instructions: Instructions(
-                "You are an expert at summarizing conversations. Create comprehensive summaries that preserve all important context and details."
-            )
-        )
-
-        let conversationText = createConversationText()
-        let summaryPrompt = """
-      Please summarize the following entire conversation comprehensively. Include all key points, topics discussed, user preferences, and important context that would help continue the conversation naturally:
-
-      \(conversationText)
-      """
-
-        let summaryResponse = try await summarySession.respond(
-            to: Prompt(summaryPrompt),
-            generating: ConversationSummary.self
-        )
-
-        return summaryResponse.content
-    }
-
-    private func createNewSessionWithContext(summary: ConversationSummary) {
-        let contextInstructions = """
-      \(instructions)
-
-      You are continuing a conversation with a user. Here's a summary of your previous conversation:
-
-      CONVERSATION SUMMARY:
-      \(summary.summary)
-
-      KEY TOPICS DISCUSSED:
-      \(summary.keyTopics.map { "• \($0)" }.joined(separator: "\n"))
-
-      USER PREFERENCES/REQUESTS:
-      \(summary.userPreferences.map { "• \($0)" }.joined(separator: "\n"))
-
-      Continue the conversation naturally, referencing this context when relevant. The user's next message is a continuation of your previous discussion.
-      """
-
-        session = LanguageModelSession(instructions: Instructions(contextInstructions))
-        sessionCount += 1
-    }
-
-    @MainActor
-    private func respondWithNewSession(to userMessage: String) async throws {
-        let responseStream = session.streamResponse(to: Prompt(userMessage))
-
-        for try await _ in responseStream {
-            // The streaming automatically updates the session transcript
-        }
-    }
-
-    @MainActor
-    private func handleSummarizationError(_ error: Error) {
-        isSummarizing = false
-        errorMessage = error.localizedDescription
-        showError = true
-    }
-
-    @MainActor
     func dismissError() {
         showError = false
         errorMessage = nil
