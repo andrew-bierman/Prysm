@@ -127,7 +127,7 @@ enum AppConfig {
     static let contentRating = "4+"
 
     /// Copyright text
-    static let copyright = "© 2024 \(developerName). All rights reserved."
+    static let copyright = "© 2025 \(developerName). All rights reserved."
 
     // MARK: - App Store Screenshots
 
@@ -177,10 +177,12 @@ enum AppConfig {
     static let supportURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())")
 
     /// Privacy policy URL
-    static let privacyURL = URL(string: "https://example.com/privacy")
+    // TODO: Replace with actual privacy policy URL once hosted (e.g., GitHub Pages for andrewbierman/prysm)
+    static let privacyURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())/blob/main/PRIVACY.md")
 
     /// Terms of service URL
-    static let termsURL = URL(string: "https://example.com/terms")
+    // TODO: Replace with actual terms of service URL once hosted (e.g., GitHub Pages for andrewbierman/prysm)
+    static let termsURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())/blob/main/TERMS.md")
 
     // MARK: - Version Info
 
