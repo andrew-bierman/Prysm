@@ -50,6 +50,9 @@ struct SettingsView: View {
         }
     }
 
+    // TODO: Theme, Accent Color, and Font Size pickers persist selections to UserDefaults
+    // but are not yet wired up to actually change the app's appearance. Leaving functional
+    // since they at least store the user's preference for future implementation.
     private var appearanceSection: some View {
         Section("Appearance") {
             Picker("Theme", selection: $appearanceMode) {
@@ -134,10 +137,30 @@ struct SettingsView: View {
     }
 
     private var accessibilitySection: some View {
-        Section("Accessibility") {
-            Toggle("Reduce Motion", isOn: .constant(false))
-            Toggle("Increase Contrast", isOn: .constant(false))
-            Toggle("Voice Over Hints", isOn: .constant(true))
+        Section {
+            HStack {
+                Label("Reduce Motion", systemImage: "figure.walk")
+                Spacer()
+                Text("Coming Soon")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            HStack {
+                Label("Increase Contrast", systemImage: "circle.lefthalf.filled")
+                Spacer()
+                Text("Coming Soon")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            HStack {
+                Label("VoiceOver Hints", systemImage: "speaker.wave.2")
+                Spacer()
+                Text("Coming Soon")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text("Accessibility")
         }
     }
 
@@ -146,9 +169,27 @@ struct SettingsView: View {
             Toggle("Enable Notifications", isOn: $enableNotifications)
 
             if enableNotifications {
-                Toggle("Daily Tips", isOn: .constant(true))
-                Toggle("Feature Updates", isOn: .constant(true))
-                Toggle("Community Highlights", isOn: .constant(false))
+                HStack {
+                    Text("Daily Tips")
+                    Spacer()
+                    Text("Coming Soon")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                HStack {
+                    Text("Feature Updates")
+                    Spacer()
+                    Text("Coming Soon")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                HStack {
+                    Text("Community Highlights")
+                    Spacer()
+                    Text("Coming Soon")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
@@ -158,7 +199,7 @@ struct SettingsView: View {
             HStack {
                 Text("Cache Size")
                 Spacer()
-                Text("124 MB")
+                Text(formattedCacheSize)
                     .foregroundStyle(.secondary)
             }
 
@@ -166,10 +207,12 @@ struct SettingsView: View {
                 clearCache()
             }
 
+            // TODO: Export Data is not yet implemented. Needs a share sheet or file export flow.
             HStack {
                 Text("Export Data")
                 Spacer()
-                Image(systemName: "square.and.arrow.up")
+                Text("Coming Soon")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
@@ -221,6 +264,22 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private var formattedCacheSize: String {
+        let urlCacheSize = URLCache.shared.currentDiskUsage + URLCache.shared.currentMemoryUsage
+        let tempDirSize: Int = {
+            let tempDir = FileManager.default.temporaryDirectory
+            guard let contents = try? FileManager.default.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: [.fileSizeKey]) else { return 0 }
+            return contents.reduce(0) { total, url in
+                let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
+                return total + size
+            }
+        }()
+        let totalBytes = urlCacheSize + tempDirSize
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: Int64(totalBytes))
     }
 
     private func resetAllSettings() {
