@@ -353,7 +353,7 @@ struct AboutView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
-                        Text("© 2024 Luma AI. All rights reserved.")
+                        Text(AppConfig.copyright)
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                     }

@@ -127,7 +127,10 @@ enum AppConfig {
     static let contentRating = "4+"
 
     /// Copyright text
-    static let copyright = "© 2024 \(developerName). All rights reserved."
+    static var copyright: String {
+        let year = Calendar.current.component(.year, from: Date())
+        return "© \(year) \(developerName). All rights reserved."
+    }
 
     // MARK: - App Store Screenshots
 
