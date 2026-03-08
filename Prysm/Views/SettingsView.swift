@@ -9,6 +9,7 @@ import SwiftUI
 import FoundationModels
 
 struct SettingsView: View {
+    @Environment(ChatViewModel.self) private var chatViewModel
     @AppStorage("autoSaveConversations") private var autoSaveConversations = true
     @AppStorage("enableHaptics") private var enableHaptics = true
     @AppStorage("showWordCount") private var showWordCount = false
@@ -19,6 +20,7 @@ struct SettingsView: View {
     @AppStorage("fontSize") private var fontSize = "medium"
     @AppStorage("useBaseInstructions") private var useBaseInstructions = true
     @State private var showingResetAlert = false
+    @State private var showingClearHistoryAlert = false
     @State private var showingAbout = false
 
     var body: some View {
@@ -125,10 +127,18 @@ struct SettingsView: View {
             }
 
             Button {
-                clearConversationHistory()
+                showingClearHistoryAlert = true
             } label: {
                 Label("Clear Conversation History", systemImage: "trash")
                     .foregroundStyle(.red)
+            }
+            .alert("Clear Conversation History?", isPresented: $showingClearHistoryAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear", role: .destructive) {
+                    clearConversationHistory()
+                }
+            } message: {
+                Text("This will clear the current conversation. This action cannot be undone.")
             }
         }
     }
@@ -236,15 +246,7 @@ struct SettingsView: View {
     }
 
     private func clearConversationHistory() {
-        // Clear UserDefaults for conversation-related data
-        UserDefaults.standard.removeObject(forKey: "conversationHistory")
-        UserDefaults.standard.removeObject(forKey: "savedTranscripts")
-
-        // Clear any stored conversation summaries
-        if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let conversationsURL = documentsDirectory.appendingPathComponent("Conversations")
-            try? FileManager.default.removeItem(at: conversationsURL)
-        }
+        chatViewModel.clearChat()
     }
 
     private func clearCache() {
@@ -388,4 +390,5 @@ struct AboutView: View {
     NavigationStack {
         SettingsView()
     }
+    .environment(ChatViewModel())
 }
