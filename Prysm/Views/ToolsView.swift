@@ -9,7 +9,21 @@ import SwiftUI
 
 struct ToolsView: View {
     @State private var selectedCategory: ToolCategory = .productivity
-    @State private var enabledTools: Set<String> = ["summarizer", "translator", "codeFormatter"]
+    @AppStorage("enabledTools") private var enabledToolsData: Data = {
+        let defaults = ["summarizer", "translator", "codeFormatter"]
+        return (try? JSONEncoder().encode(defaults)) ?? Data()
+    }()
+
+    private var enabledTools: Set<String> {
+        guard let tools = try? JSONDecoder().decode([String].self, from: enabledToolsData) else {
+            return ["summarizer", "translator", "codeFormatter"]
+        }
+        return Set(tools)
+    }
+
+    private func setEnabledTools(_ tools: Set<String>) {
+        enabledToolsData = (try? JSONEncoder().encode(Array(tools))) ?? Data()
+    }
 
     var body: some View {
         ScrollView {
@@ -19,6 +33,8 @@ struct ToolsView: View {
                 categoryPicker
 
                 toolsList
+
+                comingSoonBanner
             }
             .padding()
         }
@@ -84,13 +100,29 @@ struct ToolsView: View {
         }
     }
 
+    private var comingSoonBanner: some View {
+        HStack(spacing: Spacing.small) {
+            Image(systemName: "info.circle.fill")
+                .foregroundStyle(.secondary)
+            Text("Tools are saved for future use. Functionality coming soon.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.secondary.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+    }
+
     private func toggleTool(_ tool: ToolItem) {
         withAnimation(.spring(response: 0.3)) {
-            if enabledTools.contains(tool.id) {
-                enabledTools.remove(tool.id)
+            var tools = enabledTools
+            if tools.contains(tool.id) {
+                tools.remove(tool.id)
             } else {
-                enabledTools.insert(tool.id)
+                tools.insert(tool.id)
             }
+            setEnabledTools(tools)
         }
     }
 }
