@@ -61,6 +61,7 @@ struct AdaptiveNavigationView: View {
             NavigationStack {
                 SettingsView()
             }
+            .environment(chatViewModel)
             .tabItem {
                 Label(TabSelection.settings.displayName, systemImage: TabSelection.settings.systemImage)
             }
@@ -112,6 +113,7 @@ struct AdaptiveNavigationView: View {
             NavigationStack {
                 SettingsView()
             }
+            .environment(chatViewModel)
         }
     }
 }
