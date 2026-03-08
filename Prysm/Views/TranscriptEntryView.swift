@@ -47,7 +47,7 @@ struct MarkdownTextView: View {
     let content: String
 
     var body: some View {
-        if let attributed = try? AttributedString(markdown: content, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
+        if let attributed = try? AttributedString(markdown: content, options: .init(interpretedSyntax: .fullPreservingWhitespace)) {
             Text(attributed)
                 .textSelection(.enabled)
         } else {

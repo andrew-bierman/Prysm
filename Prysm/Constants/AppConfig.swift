@@ -128,7 +128,7 @@ enum AppConfig {
 
     /// Copyright text
     static var copyright: String {
-        let year = Calendar.current.component(.year, from: Date())
+        let year = Calendar(identifier: .gregorian).component(.year, from: Date())
         return "© \(year) \(developerName). All rights reserved."
     }
 
