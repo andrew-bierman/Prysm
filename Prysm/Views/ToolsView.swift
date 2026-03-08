@@ -12,7 +12,7 @@ struct ToolsView: View {
 
     @State private var selectedCategory: ToolCategory = .productivity
     @AppStorage("enabledToolsData") private var enabledToolsData: Data = {
-        return (try? JSONEncoder().encode(defaultTools)) ?? Data()
+        return (try? JSONEncoder().encode(Self.defaultTools)) ?? Data()
     }()
 
     private var enabledTools: Set<String> {
@@ -32,8 +32,11 @@ struct ToolsView: View {
     private func migrateIfNeeded() {
         let defaults = UserDefaults.standard
         if let legacy = defaults.array(forKey: "enabledTools") as? [String] {
-            if let data = try? JSONEncoder().encode(legacy.sorted()) {
-                enabledToolsData = data
+            // Only migrate when the new key is unset/empty to avoid overwriting existing data.
+            if defaults.data(forKey: "enabledToolsData") == nil {
+                if let data = try? JSONEncoder().encode(legacy.sorted()) {
+                    enabledToolsData = data
+                }
             }
             defaults.removeObject(forKey: "enabledTools")
         }
