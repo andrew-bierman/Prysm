@@ -45,7 +45,7 @@ Prysm is a state-of-the-art demonstration of Apple's FoundationModels framework,
 ### 🛠 Technical Excellence
 
 - **@Observable Architecture** - Modern state management without Combine
-- **Comprehensive Testing** - 52 tests covering models, views, and ViewModels
+- **Comprehensive Testing** - 52 unit tests + 3 UI tests covering models, views, and ViewModels
 - **Zero Warnings** - Production-ready code quality
 - **Type Safety** - Full type safety with no force unwraps
 - **Error Handling** - Robust error recovery and user feedback
@@ -101,8 +101,6 @@ Prysm/
 │   ├── Extensions/
 │   │   ├── Color+Extensions.swift  # Color utilities
 │   │   └── Transcript+TokenCounting.swift # Token estimation
-│   ├── Services/
-│   │   └── OnDeviceProvider.swift  # On-device model provider
 │   ├── Utilities/
 │   │   └── IconGenerator.swift     # Icon generation utility
 │   └── Assets.xcassets/            # Images and app icons
