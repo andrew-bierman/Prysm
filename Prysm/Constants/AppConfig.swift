@@ -180,10 +180,10 @@ enum AppConfig {
     static let supportURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())")
 
     /// Privacy policy URL
-    static let privacyURL = URL(string: "https://example.com/privacy")
+    static let privacyURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())/blob/main/PRIVACY.md")
 
     /// Terms of service URL
-    static let termsURL = URL(string: "https://example.com/terms")
+    static let termsURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())/blob/main/TERMS.md")
 
     // MARK: - Version Info
 
