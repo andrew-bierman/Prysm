@@ -1,19 +1,19 @@
 <div align="center">
   <img src="AppIcon.png" alt="Prysm Logo" width="200"/>
 
-  # Prism 🌈
+  # Prysm 🌈
 
   A cutting-edge multiplatform SwiftUI application showcasing Apple's FoundationModels framework with production-ready architecture and comprehensive test coverage.
 
   [![Download on the App Store](https://img.shields.io/badge/App%20Store-Download-blue.svg)](https://apps.apple.com/us/app/prysm-ai/id6754121721)
-  ![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
+  ![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)
   ![Platforms](https://img.shields.io/badge/Platforms-iOS%20%7C%20iPadOS%20%7C%20macOS%20%7C%20visionOS-blue.svg)
   ![License](https://img.shields.io/badge/License-MIT-green.svg)
 </div>
 
 ## Overview
 
-Prism is a state-of-the-art demonstration of Apple's FoundationModels framework, built with Swift 6 and SwiftUI. It provides a sophisticated chat interface with AI-powered conversations, featuring platform-adaptive designs that feel native on iOS, iPadOS, macOS, and visionOS.
+Prysm is a state-of-the-art demonstration of Apple's FoundationModels framework, built with Swift and SwiftUI. It provides a sophisticated chat interface with AI-powered conversations, featuring platform-adaptive designs that feel native on iOS, iPadOS, macOS, and visionOS.
 
 **[Download on the App Store](https://apps.apple.com/us/app/prysm-ai/id6754121721)**
 
@@ -39,34 +39,26 @@ Prism is a state-of-the-art demonstration of Apple's FoundationModels framework,
 
 #### macOS
 - Native NavigationSplitView with sidebar
-- Menu bar commands and keyboard shortcuts (⌘R, ⌘,)
 - Window management with ideal sizing (1200x800)
 - macOS-specific controls and styling
 
-#### visionOS
-- Volumetric windows with 3D depth
-- Ornament-based controls
-- Immersive space support
-- Spatial UI with materials
-
 ### 🛠 Technical Excellence
 
-- **Swift 6 Strict Concurrency** - Complete actor isolation and Sendable conformance
 - **@Observable Architecture** - Modern state management without Combine
-- **Comprehensive Testing** - 265+ tests covering models, views, and ViewModels
+- **Comprehensive Testing** - 52 unit tests + 3 UI tests covering models, views, and ViewModels
 - **Zero Warnings** - Production-ready code quality
 - **Type Safety** - Full type safety with no force unwraps
 - **Error Handling** - Robust error recovery and user feedback
 
 ## Requirements
 
-- **Xcode 16.0+**
-- **Swift 6.0+**
+- **Xcode 26.0+**
+- **Swift 5.0+**
 - **Deployment Targets:**
-  - iOS 18.0+
-  - iPadOS 18.0+
-  - macOS 15.0+
-  - visionOS 2.0+
+  - iOS 26.0+
+  - iPadOS 26.0+
+  - macOS 26.0+
+  - visionOS 26.0+
 
 ## Project Structure
 
@@ -119,8 +111,16 @@ Prysm/
 │   ├── SettingsTests.swift
 │   └── UIComponentTests.swift
 ├── PrysmUITests/                   # UI tests
+│   ├── PrysmUITests.swift
+│   └── PrysmUITestsLaunchTests.swift
 └── Scripts/
-    └── generate_sf_icon.swift      # Icon generation script
+    ├── change_app_name.py          # App renaming script
+    ├── generate_ai_icon.py         # AI icon generation
+    ├── generate_geometric_prism.py # Geometric prism icon
+    ├── generate_icons.py           # Icon generation
+    ├── generate_sf_icon.swift      # SF Symbol icon generation
+    ├── process_app_icon.py         # App icon processing
+    └── rebrand_app.py              # App rebranding script
 ```
 
 ## Getting Started
@@ -133,7 +133,7 @@ Prysm/
 
 2. **Open in Xcode**
    ```bash
-   open prism.xcodeproj
+   open Prysm.xcodeproj
    ```
 
 3. **Build the project**
@@ -174,13 +174,13 @@ final class ChatViewModel {
 Chat messages leverage the FoundationModels Transcript system for context management:
 
 ```swift
-struct ChatMessage: Sendable, Identifiable {
+struct ChatMessage: Identifiable, Equatable {
     let id: UUID
-    let entryID: UUID
-    var content: AttributedString
-    var isFromUser: Bool
-    var timestamp: Date
-    var isContextSummary: Bool
+    let entryID: Transcript.Entry.ID?
+    let content: AttributedString
+    let isFromUser: Bool
+    let timestamp: Date
+    let isContextSummary: Bool
 }
 ```
 
@@ -307,17 +307,6 @@ Run tests with:
 Select test file → ⌘U
 ```
 
-## Keyboard Shortcuts (macOS)
-
-| Shortcut | Action |
-|----------|--------|
-| ⌘N | New Chat |
-| ⌘R | Reset Chat |
-| ⌘, | Open Settings |
-| ⌘⇧K | Clear All Messages |
-| ⌘⌥S | Toggle Sidebar |
-| ⌘/ | Focus Message Input |
-
 ## Settings
 
 ### Model Configuration
@@ -358,7 +347,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [ ] Conversation persistence (SwiftData + CloudKit sync)
 - [ ] Export/import functionality (JSON, Markdown, PDF)
 - [ ] Custom tool implementations (Web Search, Calculator, etc.)
-- [ ] Enhanced visionOS immersive experiences
 - [ ] Conversation branching and history management
 - [ ] Voice input/output capabilities
 - [ ] Widget extensions for quick access
@@ -368,7 +356,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Acknowledgments
 
-- Built with Apple's latest SwiftUI and Swift 6 technologies
+- Built with Apple's latest SwiftUI and Swift technologies
 - Designed following Apple's Human Interface Guidelines
 - Inspired by modern AI chat interfaces
 
@@ -384,4 +372,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Note:** Prysm is built on Apple's FoundationModels framework, showcasing the power of on-device AI with Swift 6 and SwiftUI. The app demonstrates structured content generation, streaming conversations, and intelligent context management—all running locally on your Apple devices.
+**Note:** Prysm is built on Apple's FoundationModels framework, showcasing the power of on-device AI with Swift and SwiftUI. The app demonstrates structured content generation, streaming conversations, and intelligent context management—all running locally on your Apple devices.
