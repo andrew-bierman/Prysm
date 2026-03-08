@@ -1,16 +1,16 @@
 //
 //  ContentViewModelTests.swift
-//  PrismTests
+//  PrysmTests
 //
 //  Testing the ContentViewModel for examples generation
 //
 
 import Testing
 import Foundation
-import FoundationModels
 @testable import Prysm
 
 @MainActor
+@Suite("ContentViewModel Tests")
 struct ContentViewModelTests {
 
     @Test("ViewModel initializes with empty generated content")
@@ -18,303 +18,444 @@ struct ContentViewModelTests {
         let viewModel = ContentViewModel()
 
         #expect(viewModel.generatedRecipe == nil)
+        #expect(viewModel.generatedBook == nil)
         #expect(viewModel.generatedItinerary == nil)
-        #expect(viewModel.generatedReviews.isEmpty)
-        #expect(viewModel.generatedRecommendations.isEmpty)
+        #expect(viewModel.generatedStory == nil)
+        #expect(viewModel.generatedBusiness == nil)
+        #expect(viewModel.generatedEmail == nil)
+        #expect(viewModel.generatedReview == nil)
         #expect(viewModel.lastGeneratedContent == nil)
-        #expect(!viewModel.isGenerating)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isLoading)
     }
 
-    @Test("Generation status updates during content generation")
-    func testGenerationStatus() async {
+    @Test("Loading status can be toggled")
+    func testLoadingStatus() async {
         let viewModel = ContentViewModel()
 
-        #expect(!viewModel.isGenerating)
+        #expect(!viewModel.isLoading)
 
-        // Start generation
-        viewModel.isGenerating = true
-        #expect(viewModel.isGenerating)
+        viewModel.isLoading = true
+        #expect(viewModel.isLoading)
 
-        // Complete generation
-        viewModel.isGenerating = false
-        #expect(!viewModel.isGenerating)
+        viewModel.isLoading = false
+        #expect(!viewModel.isLoading)
     }
 
-    @Test("Recipe generation stores result")
-    func testRecipeGeneration() async {
+    @Test("Recipe can be stored on view model")
+    func testRecipeStorage() async {
         let viewModel = ContentViewModel()
 
-        // Simulate recipe generation
         let testRecipe = Recipe(
             name: "Test Recipe",
-            description: "A test recipe",
-            ingredients: ["ingredient1", "ingredient2"],
-            instructions: ["step1", "step2"],
-            prepTime: 15,
-            cookTime: 30,
+            cuisine: "Italian",
+            difficulty: .easy,
+            prepTimeMinutes: 15,
             servings: 4,
-            difficulty: "Easy",
-            cuisineType: "Italian"
+            ingredients: ["ingredient1", "ingredient2"],
+            instructions: ["step1", "step2"]
         )
 
         viewModel.generatedRecipe = testRecipe
         viewModel.lastGeneratedContent = testRecipe
 
         #expect(viewModel.generatedRecipe?.name == "Test Recipe")
+        #expect(viewModel.generatedRecipe?.cuisine == "Italian")
+        #expect(viewModel.generatedRecipe?.difficulty == .easy)
+        #expect(viewModel.generatedRecipe?.prepTimeMinutes == 15)
+        #expect(viewModel.generatedRecipe?.servings == 4)
         #expect(viewModel.generatedRecipe?.ingredients.count == 2)
-        #expect(viewModel.generatedRecipe?.prepTime == 15)
-        #expect(viewModel.lastGeneratedContent as? Recipe == testRecipe)
+        #expect(viewModel.generatedRecipe?.instructions.count == 2)
+        #expect(viewModel.lastGeneratedContent != nil)
     }
 
-    @Test("Book recommendations generation")
-    func testBookRecommendations() async {
+    @Test("BookRecommendation can be stored on view model")
+    func testBookRecommendationStorage() async {
         let viewModel = ContentViewModel()
 
-        // Simulate book recommendations
-        let testBooks = [
-            Book(
-                title: "Test Book 1",
-                author: "Author 1",
-                genre: "Fiction",
-                yearPublished: 2023,
-                summary: "A great book",
-                whyRecommended: "You'll love it"
-            ),
-            Book(
-                title: "Test Book 2",
-                author: "Author 2",
-                genre: "Non-fiction",
-                yearPublished: 2024,
-                summary: "Another great book",
-                whyRecommended: "Perfect for you"
-            )
-        ]
+        let testBook = BookRecommendation(
+            title: "1984",
+            author: "George Orwell",
+            description: "A dystopian novel",
+            genre: .fiction,
+            recommendation: "Classic must-read"
+        )
 
-        viewModel.generatedRecommendations = testBooks
-        viewModel.lastGeneratedContent = testBooks
+        viewModel.generatedBook = testBook
+        viewModel.lastGeneratedContent = testBook
 
-        #expect(viewModel.generatedRecommendations.count == 2)
-        #expect(viewModel.generatedRecommendations.first?.title == "Test Book 1")
-        #expect(viewModel.generatedRecommendations.last?.genre == "Non-fiction")
+        #expect(viewModel.generatedBook?.title == "1984")
+        #expect(viewModel.generatedBook?.author == "George Orwell")
+        #expect(viewModel.generatedBook?.description == "A dystopian novel")
+        #expect(viewModel.generatedBook?.genre == .fiction)
+        #expect(viewModel.generatedBook?.recommendation == "Classic must-read")
+        #expect(viewModel.lastGeneratedContent != nil)
     }
 
-    @Test("Travel itinerary generation")
-    func testItineraryGeneration() async {
+    @Test("TravelItinerary can be stored on view model")
+    func testItineraryStorage() async {
         let viewModel = ContentViewModel()
 
-        // Simulate itinerary generation
         let testItinerary = TravelItinerary(
             destination: "Paris",
-            duration: "5 days",
+            duration: 5,
+            budget: .moderate,
             activities: [
-                Activity(
-                    name: "Eiffel Tower",
-                    description: "Visit the iconic tower",
-                    duration: "2 hours",
-                    estimatedCost: "$30",
-                    bestTime: "Morning"
+                DayPlan(
+                    day: 1,
+                    morning: "Visit the Eiffel Tower",
+                    afternoon: "Explore the Louvre",
+                    evening: "Dinner on the Seine"
                 ),
-                Activity(
-                    name: "Louvre Museum",
-                    description: "See amazing art",
-                    duration: "4 hours",
-                    estimatedCost: "$20",
-                    bestTime: "Afternoon"
+                DayPlan(
+                    day: 2,
+                    morning: "Montmartre walk",
+                    afternoon: "Notre-Dame area",
+                    evening: "Cabaret show"
                 )
             ],
-            estimatedBudget: "$1500",
-            bestTimeToVisit: "Spring"
+            accommodations: ["Hotel Le Marais", "Airbnb in Montmartre"]
         )
 
         viewModel.generatedItinerary = testItinerary
         viewModel.lastGeneratedContent = testItinerary
 
         #expect(viewModel.generatedItinerary?.destination == "Paris")
+        #expect(viewModel.generatedItinerary?.duration == 5)
+        #expect(viewModel.generatedItinerary?.budget == .moderate)
         #expect(viewModel.generatedItinerary?.activities.count == 2)
-        #expect(viewModel.generatedItinerary?.activities.first?.name == "Eiffel Tower")
+        #expect(viewModel.generatedItinerary?.activities.first?.day == 1)
+        #expect(viewModel.generatedItinerary?.activities.first?.morning == "Visit the Eiffel Tower")
+        #expect(viewModel.generatedItinerary?.accommodations.count == 2)
     }
 
-    @Test("Product reviews generation")
-    func testProductReviews() async {
+    @Test("StoryOutline can be stored on view model")
+    func testStoryStorage() async {
         let viewModel = ContentViewModel()
 
-        // Simulate product reviews
-        let testReviews = [
-            ProductReview(
-                reviewerName: "John Doe",
-                rating: 5,
-                title: "Excellent product!",
-                review: "I love this product",
-                verifiedPurchase: true,
-                helpfulCount: 42,
-                datePosted: Date()
-            ),
-            ProductReview(
-                reviewerName: "Jane Smith",
-                rating: 4,
-                title: "Good but could be better",
-                review: "Overall satisfied",
-                verifiedPurchase: false,
-                helpfulCount: 15,
-                datePosted: Date()
-            )
-        ]
+        let testStory = StoryOutline(
+            title: "The Last Algorithm",
+            protagonist: "Ada, a brilliant software engineer",
+            conflict: "An AI threatens to replace all human creativity",
+            setting: "San Francisco, 2035",
+            genre: .sciFi,
+            themes: ["technology", "creativity", "humanity"]
+        )
 
-        viewModel.generatedReviews = testReviews
-        viewModel.lastGeneratedContent = testReviews
+        viewModel.generatedStory = testStory
+        viewModel.lastGeneratedContent = testStory
 
-        #expect(viewModel.generatedReviews.count == 2)
-        #expect(viewModel.generatedReviews.first?.rating == 5)
-        #expect(viewModel.generatedReviews.last?.reviewerName == "Jane Smith")
+        #expect(viewModel.generatedStory?.title == "The Last Algorithm")
+        #expect(viewModel.generatedStory?.protagonist == "Ada, a brilliant software engineer")
+        #expect(viewModel.generatedStory?.genre == .sciFi)
+        #expect(viewModel.generatedStory?.themes.count == 3)
     }
 
-    @Test("Clear all generated content")
-    func testClearGeneratedContent() async {
+    @Test("BusinessIdea can be stored on view model")
+    func testBusinessIdeaStorage() async {
         let viewModel = ContentViewModel()
 
-        // Add some content
+        let testBusiness = BusinessIdea(
+            name: "EcoDeliver",
+            description: "Sustainable last-mile delivery service",
+            targetMarket: "Urban eco-conscious consumers",
+            revenueModel: "Per-delivery fee plus subscription",
+            advantages: ["Zero emissions", "Faster than traditional delivery"],
+            estimatedStartupCost: "$50,000",
+            timeline: "6 months to launch"
+        )
+
+        viewModel.generatedBusiness = testBusiness
+        viewModel.lastGeneratedContent = testBusiness
+
+        #expect(viewModel.generatedBusiness?.name == "EcoDeliver")
+        #expect(viewModel.generatedBusiness?.targetMarket == "Urban eco-conscious consumers")
+        #expect(viewModel.generatedBusiness?.advantages.count == 2)
+        #expect(viewModel.generatedBusiness?.timeline == "6 months to launch")
+    }
+
+    @Test("EmailDraft can be stored on view model")
+    func testEmailStorage() async {
+        let viewModel = ContentViewModel()
+
+        let testEmail = EmailDraft(
+            subject: "Meeting Follow-Up",
+            greeting: "Dear Team,",
+            body: "Thank you for attending the meeting.",
+            closing: "Best regards",
+            tone: .professional
+        )
+
+        viewModel.generatedEmail = testEmail
+        viewModel.lastGeneratedContent = testEmail
+
+        #expect(viewModel.generatedEmail?.subject == "Meeting Follow-Up")
+        #expect(viewModel.generatedEmail?.tone == .professional)
+    }
+
+    @Test("ProductReview can be stored on view model")
+    func testProductReviewStorage() async {
+        let viewModel = ContentViewModel()
+
+        let testReview = ProductReview(
+            productName: "Wireless Headphones",
+            rating: 4,
+            reviewText: "Great sound quality and comfortable fit.",
+            wouldRecommend: true,
+            pros: ["Sound quality", "Comfort", "Battery life"],
+            cons: ["Price", "No wired option"]
+        )
+
+        viewModel.generatedReview = testReview
+        viewModel.lastGeneratedContent = testReview
+
+        #expect(viewModel.generatedReview?.productName == "Wireless Headphones")
+        #expect(viewModel.generatedReview?.rating == 4)
+        #expect(viewModel.generatedReview?.wouldRecommend == true)
+        #expect(viewModel.generatedReview?.pros.count == 3)
+        #expect(viewModel.generatedReview?.cons.count == 2)
+    }
+
+    @Test("clearResults resets all generated content")
+    func testClearResults() async {
+        let viewModel = ContentViewModel()
+
+        // Populate some content
         viewModel.generatedRecipe = Recipe(
             name: "Test",
-            description: "Test",
-            ingredients: [],
-            instructions: [],
-            prepTime: 0,
-            cookTime: 0,
+            cuisine: "Test",
+            difficulty: .easy,
+            prepTimeMinutes: 0,
             servings: 1,
-            difficulty: "Easy",
-            cuisineType: "Test"
+            ingredients: [],
+            instructions: []
         )
-        viewModel.generatedRecommendations = [Book(
+        viewModel.generatedBook = BookRecommendation(
             title: "Test",
             author: "Test",
-            genre: "Test",
-            yearPublished: 2024,
-            summary: "Test",
-            whyRecommended: "Test"
-        )]
+            description: "Test",
+            genre: .fiction,
+            recommendation: "Test"
+        )
+        viewModel.errorMessage = "Some error"
         viewModel.lastGeneratedContent = "Some content"
 
         // Clear all
-        viewModel.clearAll()
+        viewModel.clearResults()
 
         #expect(viewModel.generatedRecipe == nil)
+        #expect(viewModel.generatedBook == nil)
         #expect(viewModel.generatedItinerary == nil)
-        #expect(viewModel.generatedReviews.isEmpty)
-        #expect(viewModel.generatedRecommendations.isEmpty)
+        #expect(viewModel.generatedStory == nil)
+        #expect(viewModel.generatedBusiness == nil)
+        #expect(viewModel.generatedEmail == nil)
+        #expect(viewModel.generatedReview == nil)
         #expect(viewModel.lastGeneratedContent == nil)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("Error message can be set and cleared")
+    func testErrorMessage() async {
+        let viewModel = ContentViewModel()
+
+        #expect(viewModel.errorMessage == nil)
+
+        viewModel.errorMessage = "Something went wrong"
+        #expect(viewModel.errorMessage == "Something went wrong")
+
+        viewModel.clearResults()
+        #expect(viewModel.errorMessage == nil)
     }
 }
 
 // MARK: - Model Structure Tests
 
-extension ContentViewModelTests {
+@Suite("Data Model Tests")
+struct DataModelTests {
 
     @Test("Recipe model properties")
     func testRecipeModel() {
         let recipe = Recipe(
             name: "Pasta Carbonara",
-            description: "Classic Italian dish",
-            ingredients: ["Pasta", "Eggs", "Bacon", "Parmesan"],
-            instructions: ["Boil pasta", "Cook bacon", "Mix eggs", "Combine"],
-            prepTime: 10,
-            cookTime: 20,
+            cuisine: "Italian",
+            difficulty: .medium,
+            prepTimeMinutes: 30,
             servings: 4,
-            difficulty: "Medium",
-            cuisineType: "Italian"
+            ingredients: ["Pasta", "Eggs", "Bacon", "Parmesan"],
+            instructions: ["Boil pasta", "Cook bacon", "Mix eggs", "Combine"]
         )
 
         #expect(recipe.name == "Pasta Carbonara")
+        #expect(recipe.cuisine == "Italian")
+        #expect(recipe.difficulty == .medium)
+        #expect(recipe.prepTimeMinutes == 30)
+        #expect(recipe.servings == 4)
         #expect(recipe.ingredients.count == 4)
         #expect(recipe.instructions.count == 4)
-        #expect(recipe.prepTime == 10)
-        #expect(recipe.cookTime == 20)
-        #expect(recipe.servings == 4)
-        #expect(recipe.difficulty == "Medium")
-        #expect(recipe.cuisineType == "Italian")
     }
 
-    @Test("Book model properties")
-    func testBookModel() {
-        let book = Book(
+    @Test("RecipeDifficulty enum values")
+    func testRecipeDifficulty() {
+        #expect(RecipeDifficulty.easy.rawValue == "easy")
+        #expect(RecipeDifficulty.medium.rawValue == "medium")
+        #expect(RecipeDifficulty.hard.rawValue == "hard")
+    }
+
+    @Test("BookRecommendation model properties")
+    func testBookRecommendationModel() {
+        let book = BookRecommendation(
             title: "1984",
             author: "George Orwell",
-            genre: "Dystopian Fiction",
-            yearPublished: 1949,
-            summary: "A totalitarian future",
-            whyRecommended: "Classic must-read"
+            description: "A dystopian novel",
+            genre: .fiction,
+            recommendation: "Classic must-read"
         )
 
         #expect(book.title == "1984")
         #expect(book.author == "George Orwell")
-        #expect(book.genre == "Dystopian Fiction")
-        #expect(book.yearPublished == 1949)
-        #expect(book.summary == "A totalitarian future")
-        #expect(book.whyRecommended == "Classic must-read")
+        #expect(book.description == "A dystopian novel")
+        #expect(book.genre == .fiction)
+        #expect(book.recommendation == "Classic must-read")
     }
 
-    @Test("Activity model properties")
-    func testActivityModel() {
-        let activity = Activity(
-            name: "Museum Visit",
-            description: "Explore art and history",
-            duration: "3 hours",
-            estimatedCost: "$25",
-            bestTime: "Morning"
+    @Test("BookGenre enum values")
+    func testBookGenre() {
+        #expect(BookGenre.fiction.rawValue == "fiction")
+        #expect(BookGenre.nonFiction.rawValue == "nonFiction")
+        #expect(BookGenre.mystery.rawValue == "mystery")
+        #expect(BookGenre.sciFi.rawValue == "sciFi")
+    }
+
+    @Test("DayPlan model properties")
+    func testDayPlanModel() {
+        let dayPlan = DayPlan(
+            day: 1,
+            morning: "Breakfast tour",
+            afternoon: "Museum visit",
+            evening: "Dinner show"
         )
 
-        #expect(activity.name == "Museum Visit")
-        #expect(activity.description == "Explore art and history")
-        #expect(activity.duration == "3 hours")
-        #expect(activity.estimatedCost == "$25")
-        #expect(activity.bestTime == "Morning")
+        #expect(dayPlan.day == 1)
+        #expect(dayPlan.morning == "Breakfast tour")
+        #expect(dayPlan.afternoon == "Museum visit")
+        #expect(dayPlan.evening == "Dinner show")
     }
 
     @Test("TravelItinerary model properties")
     func testTravelItineraryModel() {
-        let activities = [
-            Activity(
-                name: "Beach",
-                description: "Relax",
-                duration: "2 hours",
-                estimatedCost: "Free",
-                bestTime: "Afternoon"
-            )
-        ]
-
         let itinerary = TravelItinerary(
             destination: "Hawaii",
-            duration: "7 days",
-            activities: activities,
-            estimatedBudget: "$3000",
-            bestTimeToVisit: "Summer"
+            duration: 7,
+            budget: .luxury,
+            activities: [
+                DayPlan(day: 1, morning: "Beach", afternoon: "Snorkel", evening: "Luau")
+            ],
+            accommodations: ["Resort on Waikiki"]
         )
 
         #expect(itinerary.destination == "Hawaii")
-        #expect(itinerary.duration == "7 days")
+        #expect(itinerary.duration == 7)
+        #expect(itinerary.budget == .luxury)
         #expect(itinerary.activities.count == 1)
-        #expect(itinerary.estimatedBudget == "$3000")
-        #expect(itinerary.bestTimeToVisit == "Summer")
+        #expect(itinerary.accommodations.count == 1)
+    }
+
+    @Test("TravelBudget enum values")
+    func testTravelBudget() {
+        #expect(TravelBudget.budget.rawValue == "budget")
+        #expect(TravelBudget.moderate.rawValue == "moderate")
+        #expect(TravelBudget.luxury.rawValue == "luxury")
+    }
+
+    @Test("StoryOutline model properties")
+    func testStoryOutlineModel() {
+        let story = StoryOutline(
+            title: "The Quest",
+            protagonist: "A brave knight",
+            conflict: "A dragon threatens the kingdom",
+            setting: "Medieval fantasy world",
+            genre: .fantasy,
+            themes: ["courage", "sacrifice"]
+        )
+
+        #expect(story.title == "The Quest")
+        #expect(story.protagonist == "A brave knight")
+        #expect(story.conflict == "A dragon threatens the kingdom")
+        #expect(story.setting == "Medieval fantasy world")
+        #expect(story.genre == .fantasy)
+        #expect(story.themes.count == 2)
+    }
+
+    @Test("BusinessIdea model properties with optional timeline")
+    func testBusinessIdeaModel() {
+        let ideaWithTimeline = BusinessIdea(
+            name: "TestBiz",
+            description: "A test business",
+            targetMarket: "Everyone",
+            revenueModel: "Subscription",
+            advantages: ["Fast", "Cheap"],
+            estimatedStartupCost: "$10,000",
+            timeline: "3 months"
+        )
+
+        #expect(ideaWithTimeline.name == "TestBiz")
+        #expect(ideaWithTimeline.advantages.count == 2)
+        #expect(ideaWithTimeline.timeline == "3 months")
+
+        let ideaWithoutTimeline = BusinessIdea(
+            name: "TestBiz2",
+            description: "Another business",
+            targetMarket: "Developers",
+            revenueModel: "Freemium",
+            advantages: ["Open source"],
+            estimatedStartupCost: "$5,000",
+            timeline: nil
+        )
+
+        #expect(ideaWithoutTimeline.timeline == nil)
     }
 
     @Test("ProductReview model properties")
     func testProductReviewModel() {
-        let date = Date()
         let review = ProductReview(
-            reviewerName: "TestUser",
-            rating: 4,
-            title: "Good Product",
-            review: "I liked it",
-            verifiedPurchase: true,
-            helpfulCount: 10,
-            datePosted: date
+            productName: "Widget Pro",
+            rating: 5,
+            reviewText: "Outstanding product with great features.",
+            wouldRecommend: true,
+            pros: ["Durable", "Affordable"],
+            cons: ["Limited colors"]
         )
 
-        #expect(review.reviewerName == "TestUser")
-        #expect(review.rating == 4)
-        #expect(review.title == "Good Product")
-        #expect(review.review == "I liked it")
-        #expect(review.verifiedPurchase == true)
-        #expect(review.helpfulCount == 10)
-        #expect(review.datePosted == date)
+        #expect(review.productName == "Widget Pro")
+        #expect(review.rating == 5)
+        #expect(review.reviewText == "Outstanding product with great features.")
+        #expect(review.wouldRecommend == true)
+        #expect(review.pros.count == 2)
+        #expect(review.cons.count == 1)
+    }
+
+    @Test("EmailDraft model properties")
+    func testEmailDraftModel() {
+        let email = EmailDraft(
+            subject: "Hello",
+            greeting: "Hi there,",
+            body: "Just checking in.",
+            closing: "Cheers",
+            tone: .casual
+        )
+
+        #expect(email.subject == "Hello")
+        #expect(email.greeting == "Hi there,")
+        #expect(email.body == "Just checking in.")
+        #expect(email.closing == "Cheers")
+        #expect(email.tone == .casual)
+    }
+
+    @Test("EmailTone enum values")
+    func testEmailTone() {
+        #expect(EmailTone.formal.rawValue == "formal")
+        #expect(EmailTone.casual.rawValue == "casual")
+        #expect(EmailTone.friendly.rawValue == "friendly")
+        #expect(EmailTone.professional.rawValue == "professional")
     }
 }
