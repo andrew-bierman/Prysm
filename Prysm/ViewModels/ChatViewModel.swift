@@ -151,21 +151,47 @@ final class ChatViewModel {
         // Get entries that fit within our target window size
         let windowEntries = session.transcript.entriesWithinTokenBudget(targetWindowSize)
 
-        // Always preserve instructions at the beginning
-        var finalEntries = windowEntries
-        if let instructions = session.transcript.first(where: {
-            if case .instructions = $0 { return true }
-            return false
-        }) {
-            if !finalEntries.contains(where: { $0.id == instructions.id }) {
-                finalEntries.insert(instructions, at: 0)
+        // Extract conversation history text from the kept entries
+        let conversationHistory = windowEntries.compactMap { entry -> String? in
+            switch entry {
+            case .prompt(let prompt):
+                let text = prompt.segments.compactMap { segment in
+                    if case .text(let textSegment) = segment {
+                        return textSegment.content
+                    }
+                    return nil
+                }.joined(separator: " ")
+                return "User: \(text)"
+            case .response(let response):
+                let text = response.segments.compactMap { segment in
+                    if case .text(let textSegment) = segment {
+                        return textSegment.content
+                    }
+                    return nil
+                }.joined(separator: " ")
+                return "Assistant: \(text)"
+            default:
+                return nil
             }
-        }
+        }.joined(separator: "\n\n")
 
-        // Create new session with updated instructions
-        // Since we can't create a Transcript directly with entries,
-        // we'll create a new session and rebuild the transcript
-        session = LanguageModelSession(instructions: Instructions(instructions))
+        // Create new session with kept history embedded in instructions
+        // so the model retains context from the recent conversation
+        if conversationHistory.isEmpty {
+            session = LanguageModelSession(instructions: Instructions(instructions))
+        } else {
+            let contextInstructions = """
+            \(instructions)
+
+            You are continuing a conversation with the user. Here is the recent conversation history you should remember and continue from:
+
+            RECENT CONVERSATION HISTORY:
+            \(conversationHistory)
+
+            Continue the conversation naturally, maintaining context from the history above.
+            """
+            session = LanguageModelSession(instructions: Instructions(contextInstructions))
+        }
 
         sessionCount += 1
 
