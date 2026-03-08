@@ -10,7 +10,6 @@ import FoundationModels
 
 struct GenerationOptionsView: View {
     @AppStorage("temperature") private var temperature: Double = 0.7
-    @AppStorage("topP") private var topP: Double = 0.95
     @AppStorage("maxTokens") private var maxTokens: Int = 2048
     @AppStorage("streamResponses") private var streamResponses: Bool = true
     @AppStorage("autoSummarize") private var autoSummarize: Bool = true
@@ -24,7 +23,6 @@ struct GenerationOptionsView: View {
                 headerView
 
                 temperatureSection
-                topPSection
                 tokensSection
                 behaviorSection
 
@@ -83,39 +81,6 @@ struct GenerationOptionsView: View {
 
                 Slider(value: $temperature, in: 0...2, step: 0.1)
                     .tint(.purple)
-            }
-            .padding()
-            .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
-        }
-    }
-
-    private var topPSection: some View {
-        VStack(alignment: .leading, spacing: Spacing.medium) {
-            Label("Focus", systemImage: "target")
-                .font(.headline)
-
-            Text("Controls the diversity of word choices")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            VStack(alignment: .leading, spacing: Spacing.small) {
-                HStack {
-                    Text("Narrow")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(String(format: "%.2f", topP))
-                        .font(.caption.monospaced())
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Text("Broad")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Slider(value: $topP, in: 0.1...1.0, step: 0.05)
-                    .tint(.blue)
             }
             .padding()
             .background(.regularMaterial)
@@ -226,11 +191,12 @@ struct GenerationOptionsView: View {
 
     private func resetToDefaults() {
         temperature = 0.7
-        topP = 0.95
         maxTokens = 2048
         streamResponses = true
         autoSummarize = true
         contextWindowSize = 4096
+        // Clean up legacy topP key
+        UserDefaults.standard.removeObject(forKey: "topP")
     }
 }
 

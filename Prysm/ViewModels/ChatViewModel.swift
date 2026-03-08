@@ -53,9 +53,46 @@ final class ChatViewModel {
     private(set) var feedbackState: [Transcript.Entry.ID: LanguageModelFeedback.Sentiment] = [:]
 
     // MARK: - Sliding Window Configuration
-    private let maxTokens = 4096
     private let windowThreshold = 0.75
-    private let targetWindowSize = 2000
+
+    // MARK: - Generation Options (read from UserDefaults / @AppStorage)
+
+    /// Reads the current generation options from UserDefaults, matching keys set by GenerationOptionsView.
+    private var generationOptions: GenerationOptions {
+        let defaults = UserDefaults.standard
+
+        let temperature = defaults.object(forKey: "temperature") as? Double ?? 0.7
+        let maxResponseTokens = defaults.object(forKey: "maxTokens") as? Int ?? 2048
+
+        return GenerationOptions(
+            temperature: temperature,
+            maximumResponseTokens: maxResponseTokens
+        )
+    }
+
+    /// Whether to stream responses (set in GenerationOptionsView).
+    private var streamResponses: Bool {
+        let defaults = UserDefaults.standard
+        return defaults.object(forKey: "streamResponses") as? Bool ?? true
+    }
+
+    /// Whether to auto-summarize when context window is exceeded (set in GenerationOptionsView).
+    private var autoSummarize: Bool {
+        let defaults = UserDefaults.standard
+        return defaults.object(forKey: "autoSummarize") as? Bool ?? true
+    }
+
+    /// Context window size for sliding window logic (set in GenerationOptionsView).
+    private var contextWindowSize: Int {
+        let defaults = UserDefaults.standard
+        let value = defaults.integer(forKey: "contextWindowSize")
+        return value > 0 ? value : 4096
+    }
+
+    /// Target window size is half the context window, used when trimming history.
+    private var targetWindowSize: Int {
+        return contextWindowSize / 2
+    }
 
     // MARK: - Initialization
 
@@ -80,11 +117,18 @@ final class ChatViewModel {
                 await applySlidingWindow()
             }
 
-            // Stream response from current session
-            let responseStream = session.streamResponse(to: Prompt(content))
+            let options = generationOptions
 
-            for try await _ in responseStream {
-                // The streaming automatically updates the session transcript
+            if streamResponses {
+                // Stream response from current session
+                let responseStream = session.streamResponse(to: Prompt(content), options: options)
+
+                for try await _ in responseStream {
+                    // The streaming automatically updates the session transcript
+                }
+            } else {
+                // Non-streaming: wait for the full response
+                _ = try await session.respond(to: Prompt(content), options: options)
             }
 
         } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
@@ -140,7 +184,7 @@ final class ChatViewModel {
     // MARK: - Sliding Window Implementation
 
     private func shouldApplyWindow() -> Bool {
-        return session.transcript.isApproachingLimit(threshold: windowThreshold, maxTokens: maxTokens)
+        return session.transcript.isApproachingLimit(threshold: windowThreshold, maxTokens: contextWindowSize)
     }
 
     @MainActor
@@ -213,18 +257,31 @@ final class ChatViewModel {
 
     @MainActor
     private func handleContextWindowExceeded(userMessage: String) async {
-        isSummarizing = true
+        if autoSummarize {
+            isSummarizing = true
 
-        do {
-            let summary = try await generateConversationSummary()
-            createNewSessionWithContext(summary: summary)
-            isSummarizing = false
+            do {
+                let summary = try await generateConversationSummary()
+                createNewSessionWithContext(summary: summary)
+                isSummarizing = false
 
-            try await respondWithNewSession(to: userMessage)
-        } catch {
-            handleSummarizationError(error)
-            errorMessage = handleFoundationModelsError(error)
-            showError = true
+                try await respondWithNewSession(to: userMessage)
+            } catch {
+                handleSummarizationError(error)
+                errorMessage = handleFoundationModelsError(error)
+                showError = true
+            }
+        } else {
+            // Without auto-summarize, just start a fresh session and retry
+            session = LanguageModelSession(instructions: Instructions(instructions))
+            sessionCount += 1
+
+            do {
+                try await respondWithNewSession(to: userMessage)
+            } catch {
+                errorMessage = handleFoundationModelsError(error)
+                showError = true
+            }
         }
     }
 
@@ -300,10 +357,16 @@ final class ChatViewModel {
 
     @MainActor
     private func respondWithNewSession(to userMessage: String) async throws {
-        let responseStream = session.streamResponse(to: Prompt(userMessage))
+        let options = generationOptions
 
-        for try await _ in responseStream {
-            // The streaming automatically updates the session transcript
+        if streamResponses {
+            let responseStream = session.streamResponse(to: Prompt(userMessage), options: options)
+
+            for try await _ in responseStream {
+                // The streaming automatically updates the session transcript
+            }
+        } else {
+            _ = try await session.respond(to: Prompt(userMessage), options: options)
         }
     }
 
