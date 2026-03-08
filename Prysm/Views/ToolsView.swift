@@ -8,21 +8,35 @@
 import SwiftUI
 
 struct ToolsView: View {
+    private static let defaultTools: [String] = ["summarizer", "translator", "codeFormatter"]
+
     @State private var selectedCategory: ToolCategory = .productivity
-    @AppStorage("enabledTools") private var enabledToolsData: Data = {
-        let defaults = ["summarizer", "translator", "codeFormatter"]
-        return (try? JSONEncoder().encode(defaults)) ?? Data()
+    @AppStorage("enabledToolsData") private var enabledToolsData: Data = {
+        return (try? JSONEncoder().encode(defaultTools)) ?? Data()
     }()
 
     private var enabledTools: Set<String> {
         guard let tools = try? JSONDecoder().decode([String].self, from: enabledToolsData) else {
-            return ["summarizer", "translator", "codeFormatter"]
+            return Set(Self.defaultTools)
         }
         return Set(tools)
     }
 
     private func setEnabledTools(_ tools: Set<String>) {
-        enabledToolsData = (try? JSONEncoder().encode(Array(tools))) ?? Data()
+        if let data = try? JSONEncoder().encode(tools.sorted()) {
+            enabledToolsData = data
+        }
+    }
+
+    /// Migrates legacy `enabledTools` array value to the new `enabledToolsData` JSON key.
+    private func migrateIfNeeded() {
+        let defaults = UserDefaults.standard
+        if let legacy = defaults.array(forKey: "enabledTools") as? [String] {
+            if let data = try? JSONEncoder().encode(legacy.sorted()) {
+                enabledToolsData = data
+            }
+            defaults.removeObject(forKey: "enabledTools")
+        }
     }
 
     var body: some View {
@@ -42,6 +56,7 @@ struct ToolsView: View {
 #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
 #endif
+        .onAppear { migrateIfNeeded() }
     }
 
     private var headerView: some View {
