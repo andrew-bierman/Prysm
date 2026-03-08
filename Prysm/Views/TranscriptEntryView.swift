@@ -20,7 +20,7 @@ struct TranscriptEntryView: View {
 
         case .response(let response):
             if let text = extractText(from: response.segments), !text.isEmpty {
-                MessageBubbleView(message: ChatMessage(content: text, isFromUser: false))
+                MessageBubbleView(message: ChatMessage(entryID: entry.id, content: text, isFromUser: false))
             }
 
         case .instructions:
