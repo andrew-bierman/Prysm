@@ -27,7 +27,7 @@ struct MessageBubbleView: View {
 
     private var messageContent: some View {
         VStack(alignment: message.isFromUser ? .trailing : .leading, spacing: Spacing.xSmall) {
-            MarkdownTextView(content: String(describing: message.content))
+            MarkdownTextView(content: String(message.content.characters))
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.small)
                 .frame(maxWidth: .infinity, alignment: message.isFromUser ? .trailing : .leading)

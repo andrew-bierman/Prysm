@@ -43,24 +43,16 @@ struct TranscriptEntryView: View {
     }
 }
 
-#if canImport(Markdown)
-import Markdown
-
 struct MarkdownTextView: View {
     let content: String
 
     var body: some View {
-        Markdown(content: content)
-            .textSelection(.enabled)
+        if let attributed = try? AttributedString(markdown: content, options: .init(interpretedSyntax: .full)) {
+            Text(attributed)
+                .textSelection(.enabled)
+        } else {
+            Text(content)
+                .textSelection(.enabled)
+        }
     }
 }
-#else
-struct MarkdownTextView: View {
-    let content: String
-
-    var body: some View {
-        Text(content)
-            .textSelection(.enabled)
-    }
-}
-#endif
