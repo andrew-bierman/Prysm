@@ -76,7 +76,7 @@ enum AppConfig {
     KEY FEATURES:
 
     ● Private & Secure
-    On-device processing using Apple's Foundation Models framework. When using on-device models, conversations stay on your device. Remote API connections send data to external servers.
+    All processing happens on-device using Apple's Foundation Models framework. Your conversations never leave your device, ensuring complete privacy.
 
     ● Smart Conversations
     Engage in natural, contextual conversations with an AI that understands nuance and can help with a wide variety of tasks.
