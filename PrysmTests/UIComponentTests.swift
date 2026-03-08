@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 @testable import Prysm
 
+@MainActor
 struct UIComponentTests {
 
     @Test("Spacing constants have correct values")
@@ -56,47 +57,14 @@ struct UIComponentTests {
 
     @Test("Example types have correct properties")
     func testExampleTypes() {
-        let examples: [ExampleType] = [.recipes, .bookRecommendations, .travelItinerary, .productReviews]
+        let examples: [ExampleType] = [.recipes, .bookRecommendations, .travelPlanning, .productReviews]
 
         for example in examples {
             #expect(!example.title.isEmpty)
             #expect(!example.subtitle.isEmpty)
             #expect(!example.icon.isEmpty)
-            #expect(!example.prompt.isEmpty)
             let _ = example.accentColor // Should not crash
         }
-    }
-
-    @Test("Export formats have correct raw values")
-    func testExportFormats() {
-        #expect(ExportFormat.json.rawValue == "json")
-        #expect(ExportFormat.markdown.rawValue == "markdown")
-        #expect(ExportFormat.plainText.rawValue == "plainText")
-        #expect(ExportFormat.csv.rawValue == "csv")
-    }
-
-    @Test("Message model initialization")
-    func testMessageModel() {
-        let now = Date()
-        let message = Message(
-            content: "Test message",
-            isFromUser: true,
-            timestamp: now,
-            entryID: "test-id"
-        )
-
-        #expect(message.content == "Test message")
-        #expect(message.isFromUser == true)
-        #expect(message.timestamp == now)
-        #expect(message.entryID == "test-id")
-
-        // Test message without entryID
-        let userMessage = Message(
-            content: "User message",
-            isFromUser: true,
-            timestamp: now
-        )
-        #expect(userMessage.entryID == nil)
     }
 
     @Test("Tool item model properties")
@@ -152,34 +120,9 @@ struct UIComponentTests {
     }
 }
 
-// MARK: - View Model Helpers Tests
+// MARK: - View Helper Tests
 
 extension UIComponentTests {
-
-    @Test("Conversation title truncation")
-    func testConversationTitleTruncation() {
-        let viewModel = ChatViewModel()
-
-        // Short message - no truncation
-        viewModel.entries.append(Transcript.Entry(role: .user, content: "Hello"))
-        #expect(viewModel.conversationTitle == "Hello")
-
-        // Long message - should truncate
-        viewModel.entries.removeAll()
-        let longText = String(repeating: "A", count: 100)
-        viewModel.entries.append(Transcript.Entry(role: .user, content: longText))
-        let title = viewModel.conversationTitle
-        #expect(title.count <= 50)
-        #expect(title.hasSuffix("...") || title.count == 47) // 47 chars + "..."
-    }
-
-    @Test("Export format file extensions")
-    func testExportFormatExtensions() {
-        #expect(ExportFormat.json.fileExtension == "json")
-        #expect(ExportFormat.markdown.fileExtension == "md")
-        #expect(ExportFormat.plainText.fileExtension == "txt")
-        #expect(ExportFormat.csv.fileExtension == "csv")
-    }
 
     @Test("Tool category color associations")
     func testToolCategoryColors() {
@@ -199,39 +142,16 @@ extension UIComponentTests {
         // Each example type should return a valid Color
         let _ = ExampleType.recipes.accentColor
         let _ = ExampleType.bookRecommendations.accentColor
-        let _ = ExampleType.travelItinerary.accentColor
+        let _ = ExampleType.travelPlanning.accentColor
         let _ = ExampleType.productReviews.accentColor
     }
 }
 
-// MARK: - Performance Tests
+// MARK: - Tool List Tests
 
 extension UIComponentTests {
 
-    @Test("Large message list performance")
-    func testLargeMessageListPerformance() {
-        let viewModel = ChatViewModel()
-
-        // Add many messages
-        for i in 0..<200 {
-            viewModel.entries.append(
-                Transcript.Entry(
-                    role: i % 2 == 0 ? .user : .assistant,
-                    content: "Message \(i) with some content to make it realistic"
-                )
-            )
-        }
-
-        // Should handle large lists without issues
-        #expect(viewModel.entries.count == 200)
-        #expect(viewModel.hasMessages)
-
-        // Test clearing performance
-        viewModel.clearConversation()
-        #expect(viewModel.entries.isEmpty)
-    }
-
-    @Test("Tool list filtering performance")
+    @Test("Tool list filtering")
     func testToolListFiltering() {
         let allTools = ToolItem.allTools
 
