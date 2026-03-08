@@ -27,6 +27,7 @@ struct SettingsTests {
         defaults.removeObject(forKey: "customInstructions")
         defaults.removeObject(forKey: "exportFormat")
         defaults.removeObject(forKey: "enabledTools")
+        defaults.removeObject(forKey: "enabledToolsData")
         defaults.removeObject(forKey: "selectedTheme")
         defaults.removeObject(forKey: "systemPromptStyle")
         defaults.removeObject(forKey: "enableNotifications")
@@ -131,33 +132,65 @@ struct SettingsTests {
         #expect(defaults.string(forKey: "exportFormat") == "csv")
     }
 
-    @Test("Enabled tools persistence")
+    @Test("Enabled tools persistence with JSON Data encoding")
     func testEnabledToolsPersistence() {
         defer { cleanup() }
 
         let defaults = UserDefaults.standard
 
-        // Default empty set
-        #expect(defaults.array(forKey: "enabledTools") == nil)
+        // Default: no data stored
+        #expect(defaults.data(forKey: "enabledToolsData") == nil)
 
-        // Set tools
+        // Store tools as sorted JSON array (matching ToolsView behavior)
         let tools = ["calculator", "codeInterpreter", "webSearch"]
-        defaults.set(tools, forKey: "enabledTools")
+        let encoded = try! JSONEncoder().encode(tools.sorted())
+        defaults.set(encoded, forKey: "enabledToolsData")
 
-        let retrievedTools = defaults.array(forKey: "enabledTools") as? [String]
-        #expect(retrievedTools?.count == 3)
-        #expect(retrievedTools?.contains("calculator") == true)
-        #expect(retrievedTools?.contains("codeInterpreter") == true)
-        #expect(retrievedTools?.contains("webSearch") == true)
+        let retrievedData = defaults.data(forKey: "enabledToolsData")!
+        let retrievedTools = try! JSONDecoder().decode([String].self, from: retrievedData)
+        #expect(retrievedTools.count == 3)
+        #expect(retrievedTools.contains("calculator"))
+        #expect(retrievedTools.contains("codeInterpreter"))
+        #expect(retrievedTools.contains("webSearch"))
+
+        // Verify deterministic ordering
+        #expect(retrievedTools == ["calculator", "codeInterpreter", "webSearch"])
 
         // Update tools
         let updatedTools = ["calculator", "imageGenerator"]
-        defaults.set(updatedTools, forKey: "enabledTools")
+        let updatedEncoded = try! JSONEncoder().encode(updatedTools.sorted())
+        defaults.set(updatedEncoded, forKey: "enabledToolsData")
 
-        let newRetrievedTools = defaults.array(forKey: "enabledTools") as? [String]
-        #expect(newRetrievedTools?.count == 2)
-        #expect(newRetrievedTools?.contains("imageGenerator") == true)
-        #expect(newRetrievedTools?.contains("webSearch") == false)
+        let newData = defaults.data(forKey: "enabledToolsData")!
+        let newRetrievedTools = try! JSONDecoder().decode([String].self, from: newData)
+        #expect(newRetrievedTools.count == 2)
+        #expect(newRetrievedTools.contains("imageGenerator"))
+        #expect(!newRetrievedTools.contains("webSearch"))
+    }
+
+    @Test("Legacy enabledTools array migration")
+    func testLegacyEnabledToolsMigration() {
+        defer { cleanup() }
+
+        let defaults = UserDefaults.standard
+
+        // Simulate old-format data: a native array stored under "enabledTools"
+        let legacyTools = ["summarizer", "translator"]
+        defaults.set(legacyTools, forKey: "enabledTools")
+        #expect(defaults.array(forKey: "enabledTools") != nil)
+
+        // After migration the legacy key should be removed
+        // and the new key should contain sorted JSON
+        if let legacy = defaults.array(forKey: "enabledTools") as? [String] {
+            let data = try! JSONEncoder().encode(legacy.sorted())
+            defaults.set(data, forKey: "enabledToolsData")
+            defaults.removeObject(forKey: "enabledTools")
+        }
+
+        #expect(defaults.array(forKey: "enabledTools") == nil)
+        let migratedData = defaults.data(forKey: "enabledToolsData")!
+        let migrated = try! JSONDecoder().decode([String].self, from: migratedData)
+        #expect(migrated == ["summarizer", "translator"])
     }
 
     @Test("App preferences persistence")
@@ -258,6 +291,6 @@ extension SettingsTests {
         #expect(defaults.integer(forKey: "maxTokens") == 0) // Default int
         #expect(defaults.bool(forKey: "streamResponses") == false) // Default bool
         #expect(defaults.string(forKey: "selectedLanguageModel") == nil) // Default string
-        #expect(defaults.array(forKey: "enabledTools") == nil) // Default array
+        #expect(defaults.data(forKey: "enabledToolsData") == nil) // Default data
     }
 }
