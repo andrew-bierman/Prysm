@@ -41,6 +41,20 @@ struct ChatInputView: View {
                         .submitLabel(.send)
 #endif
 
+#if os(iOS)
+                    if isTextFieldFocused {
+                        Button {
+                            isTextFieldFocused = false
+                        } label: {
+                            Label("Dismiss keyboard", systemImage: "keyboard.chevron.compact.down")
+                                .labelStyle(.iconOnly)
+                                .frame(minWidth: 44, minHeight: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+#endif
+
                     Button(action: sendMessage) {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.title2)
