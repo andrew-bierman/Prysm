@@ -228,7 +228,7 @@ struct ContentViewModelTests {
             prepTimeMinutes: 1, servings: 1, ingredients: [], instructions: []
         )
         viewModel.lastGeneratedContent = viewModel.generatedRecipe
-        let result = await viewModel.generate(prompt: "New", publish: { text in
+        let result: String? = await viewModel.generate(prompt: "New", publish: { text in
             #expect(viewModel.isLoading)
             #expect(viewModel.generatedRecipe == nil)
             viewModel.lastGeneratedContent = text
