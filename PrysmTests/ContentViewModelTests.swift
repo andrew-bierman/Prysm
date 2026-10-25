@@ -7,11 +7,239 @@
 
 import Testing
 import Foundation
+import FoundationModels
 @testable import Prysm
 
 @MainActor
 @Suite("ContentViewModel Tests")
 struct ContentViewModelTests {
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Unavailable model blocks every example without generating")
+    func testUnavailableExamples() async {
+        let viewModel = ContentViewModel(modelAvailability: { .unavailable(.modelNotReady) })
+        await viewModel.generateRecipe(prompt: "Dinner")
+        #expect(viewModel.generatedRecipe == nil)
+        await viewModel.generateBookRecommendation(prompt: "Fiction")
+        await viewModel.generateTravelItinerary(prompt: "Paris")
+        await viewModel.generateStory(prompt: "Mystery")
+        await viewModel.generateBusinessIdea(prompt: "Design")
+        await viewModel.generateEmail(prompt: "Follow up")
+        await viewModel.generateProductReview(prompt: "Headphones")
+        let response = await viewModel.generateQuickResponse(prompt: "Hello")
+        #expect(response == nil)
+        #expect(viewModel.lastGeneratedContent == nil)
+        #expect(viewModel.errorMessage?.contains("downloading") == true)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Unavailable reasons explain the recovery action")
+    func testUnavailableReasons() async {
+        let reasons: [(SystemLanguageModel.Availability.UnavailableReason, String)] = [
+            (.deviceNotEligible, "not supported"),
+            (.appleIntelligenceNotEnabled, "Settings"),
+            (.modelNotReady, "downloading")
+        ]
+        for (reason, message) in reasons {
+            let viewModel = ContentViewModel(modelAvailability: { .unavailable(reason) })
+            var called = false
+            let result = await viewModel.generate(prompt: "Hello") {
+                called = true
+                return "Unexpected"
+            }
+            #expect(!called)
+            #expect(result == nil)
+            #expect(viewModel.errorMessage?.contains(message) == true)
+        }
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Blank and overlapping requests preserve the current state")
+    func testRejectedRequests() async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        viewModel.lastGeneratedContent = "Previous"
+        var called = false
+        let blank = await viewModel.generate(prompt: " \n\t") {
+            called = true
+            return "Unexpected"
+        }
+        #expect(blank == nil)
+        #expect(!called)
+        #expect(viewModel.lastGeneratedContent as? String == "Previous")
+
+        let first = await viewModel.generate(prompt: "First") {
+            #expect(viewModel.isLoading)
+            let second = await viewModel.generate(prompt: "Second") {
+                called = true
+                return "Unexpected"
+            }
+            #expect(second == nil)
+            #expect(viewModel.isLoading)
+            return "First result"
+        }
+        #expect(first == "First result")
+        #expect(!called)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Availability is rechecked and old results and errors are cleared")
+    func testAvailabilityRecovery() async {
+        var availability: SystemLanguageModel.Availability = .unavailable(.modelNotReady)
+        let viewModel = ContentViewModel(modelAvailability: { availability })
+        let blocked = await viewModel.generate(prompt: "Hello") { "Unexpected" }
+        #expect(blocked == nil)
+        availability = .available
+        viewModel.lastGeneratedContent = "Stale result"
+        let result = await viewModel.generate(prompt: "Hello") {
+            #expect(viewModel.lastGeneratedContent == nil)
+            #expect(viewModel.errorMessage == nil)
+            return "Recovered"
+        }
+        #expect(result == "Recovered")
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Failure resets loading and permits retry")
+    func testFailureAndRetry() async {
+        struct Failure: LocalizedError {
+            var errorDescription: String? { "Test failure" }
+        }
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        let result: String? = await viewModel.generate(prompt: "Hello") { throw Failure() }
+        #expect(result == nil)
+        #expect(viewModel.errorMessage == "Test failure")
+        #expect(!viewModel.isLoading)
+        let retry = await viewModel.generate(prompt: "Hello") { "Success" }
+        #expect(retry == "Success")
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Cancellation is silent and resets loading")
+    func testCancellation() async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        let result: String? = await viewModel.generate(prompt: "Hello") {
+            throw CancellationError()
+        }
+        #expect(result == nil)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Late completion after cancellation is discarded")
+    func testLateCancelledCompletion() async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        let task = Task { @MainActor in
+            await viewModel.generate(prompt: "Hello") {
+                withUnsafeCurrentTask { $0?.cancel() }
+                return "Late result"
+            }
+        }
+        let result = await task.value
+        #expect(result == nil)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Clearing suspended generation discards its result and error", arguments: [false, true])
+    func testClearSuspendedGeneration(fails: Bool) async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        let started = AsyncStream<Void>.makeStream()
+        var continuation: CheckedContinuation<String, Error>?
+        var published = false
+        let task = Task { @MainActor in
+            await viewModel.generate(prompt: "Hello", publish: { _ in
+                published = true
+            }, operation: {
+                try await withCheckedThrowingContinuation { pending in
+                    continuation = pending
+                    started.continuation.yield(())
+                    started.continuation.finish()
+                }
+            })
+        }
+        for await _ in started.stream { break }
+        #expect(viewModel.isLoading)
+        viewModel.clearResults()
+        if fails {
+            continuation?.resume(throwing: NSError(domain: "test", code: 1))
+        } else {
+            continuation?.resume(returning: "Obsolete")
+        }
+        let result = await task.value
+        #expect(result == nil)
+        #expect(!published)
+        #expect(viewModel.lastGeneratedContent == nil)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Caller cancellation discards a suspended provider's completion", arguments: [false, true])
+    func testCallerCancellation(fails: Bool) async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        let started = AsyncStream<Void>.makeStream()
+        var continuation: CheckedContinuation<String, Error>?
+        var published = false
+        let task = Task { @MainActor in
+            await viewModel.generate(prompt: "Hello", publish: { _ in
+                published = true
+            }, operation: {
+                try await withCheckedThrowingContinuation { pending in
+                    continuation = pending
+                    started.continuation.yield(())
+                    started.continuation.finish()
+                }
+            })
+        }
+        for await _ in started.stream { break }
+        var overlappingOperationCalled = false
+        let overlap = await viewModel.generate(prompt: "Second") {
+            overlappingOperationCalled = true
+            return "Unexpected"
+        }
+        #expect(overlap == nil)
+        #expect(!overlappingOperationCalled)
+        #expect(viewModel.isLoading)
+        task.cancel()
+        if fails {
+            continuation?.resume(throwing: NSError(domain: "test", code: 2))
+        } else {
+            continuation?.resume(returning: "Too late")
+        }
+        let result = await task.value
+        #expect(result == nil)
+        #expect(!published)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Typed old result is cleared and new result publishes while guarded")
+    func testTypedResultReplacement() async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        viewModel.generatedRecipe = Recipe(
+            name: "Old", cuisine: "Test", difficulty: .easy,
+            prepTimeMinutes: 1, servings: 1, ingredients: [], instructions: []
+        )
+        viewModel.lastGeneratedContent = viewModel.generatedRecipe
+        let result = await viewModel.generate(prompt: "New", publish: { text in
+            #expect(viewModel.isLoading)
+            #expect(viewModel.generatedRecipe == nil)
+            viewModel.lastGeneratedContent = text
+        }, operation: {
+            #expect(viewModel.generatedRecipe == nil)
+            return "Replacement"
+        })
+        #expect(result == "Replacement")
+        #expect(viewModel.lastGeneratedContent as? String == "Replacement")
+        #expect(!viewModel.isLoading)
+    }
 
     @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("ViewModel initializes with empty generated content")
