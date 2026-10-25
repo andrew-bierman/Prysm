@@ -7,11 +7,12 @@
 
 import SwiftUI
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct AssistantView: View {
-    @State private var selectedTab = 0
+    @Binding var selectedTab: Int
+    let onEditInstructions: () -> Void
     @AppStorage("useCustomInstructions") private var useCustomInstructions = false
     @AppStorage("customInstructions") private var customInstructions = ""
-    @State private var showingInstructionsSheet = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -40,9 +41,6 @@ struct AssistantView: View {
 #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
 #endif
-        .sheet(isPresented: $showingInstructionsSheet) {
-            InstructionsSheet(isPresented: $showingInstructionsSheet)
-        }
     }
 
     private var instructionsView: some View {
@@ -83,7 +81,7 @@ struct AssistantView: View {
                                     .font(.headline)
                                 Spacer()
                                 Button("Edit") {
-                                    showingInstructionsSheet = true
+                                    onEditInstructions()
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -196,8 +194,10 @@ let instructionTemplates = [
     )
 ]
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
+    @Previewable @State var selectedTab = 0
     NavigationStack {
-        AssistantView()
+        AssistantView(selectedTab: $selectedTab, onEditInstructions: {})
     }
 }

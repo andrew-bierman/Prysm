@@ -8,10 +8,11 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ChatView: View {
     @Binding var viewModel: ChatViewModel
     @State private var scrollID: String?
-    @State private var messageText = ""
+    @Binding var messageText: String
     @State private var showInstructionsSheet = false
     @State private var showFeedbackSheet = false
     @State private var selectedEntryForFeedback: Transcript.Entry?
@@ -167,8 +168,9 @@ struct ChatView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     NavigationStack {
-        ChatView(viewModel: .constant(ChatViewModel()))
+        ChatView(viewModel: .constant(ChatViewModel()), messageText: .constant(""))
     }
 }

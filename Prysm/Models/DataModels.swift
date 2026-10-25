@@ -10,6 +10,7 @@ import FoundationModels
 
 // MARK: - Book Recommendation Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct BookRecommendation {
     @Guide(description: "The title of the book")
@@ -28,6 +29,7 @@ struct BookRecommendation {
     let recommendation: String
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 enum BookGenre: String {
     case fiction
@@ -42,6 +44,7 @@ enum BookGenre: String {
 
 // MARK: - Recipe Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct Recipe {
     @Guide(description: "Name of the recipe")
@@ -66,6 +69,7 @@ struct Recipe {
     let instructions: [String]
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 enum RecipeDifficulty: String {
     case easy
@@ -75,6 +79,7 @@ enum RecipeDifficulty: String {
 
 // MARK: - Travel Planning Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct TravelItinerary {
     @Guide(description: "Destination city or country")
@@ -93,6 +98,7 @@ struct TravelItinerary {
     let accommodations: [String]
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct DayPlan {
     @Guide(description: "Day number")
@@ -108,6 +114,7 @@ struct DayPlan {
     let evening: String
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 enum TravelBudget: String {
     case budget
@@ -117,6 +124,7 @@ enum TravelBudget: String {
 
 // MARK: - Creative Writing Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct StoryOutline {
     @Guide(description: "The title of the story")
@@ -138,6 +146,7 @@ struct StoryOutline {
     let themes: [String]
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 enum StoryGenre: String {
     case adventure
@@ -152,6 +161,7 @@ enum StoryGenre: String {
 
 // MARK: - Business Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct BusinessIdea {
     @Guide(description: "Name of the business")
@@ -178,6 +188,7 @@ struct BusinessIdea {
 
 // MARK: - Product Review Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct ProductReview {
     @Guide(description: "Product name")
@@ -201,6 +212,7 @@ struct ProductReview {
 
 // MARK: - Email Models
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 struct EmailDraft {
     @Guide(description: "Email subject line")
@@ -219,6 +231,7 @@ struct EmailDraft {
     let tone: EmailTone
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Generable
 enum EmailTone: String {
     case formal

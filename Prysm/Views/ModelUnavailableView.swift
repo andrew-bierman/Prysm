@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ModelUnavailableView: View {
     let reason: SystemLanguageModel.Availability.UnavailableReason?
     @Environment(\.dismiss) private var dismiss
@@ -83,6 +84,7 @@ struct ModelUnavailableView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     ModelUnavailableView(reason: .deviceNotEligible)
 }

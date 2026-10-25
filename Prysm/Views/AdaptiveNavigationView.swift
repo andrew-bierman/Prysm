@@ -8,25 +8,33 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct AdaptiveNavigationView: View {
     @State private var chatViewModel = ChatViewModel()
+    @State private var messageText = ""
+    @State private var assistantSelectedTab = 0
+    @State private var modelSelectedTab = 0
+    @State private var showingInstructionsSheet = false
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private let navigationCoordinator = NavigationCoordinator.shared
 
     var body: some View {
+        Group {
 #if os(iOS)
-        if horizontalSizeClass == .compact {
-            // iPhone or iPad in compact width
-            tabBasedNavigation
-        } else {
-            // iPad in regular width
-            splitViewNavigation
-        }
+            if horizontalSizeClass == .regular {
+                splitViewNavigation
+            } else {
+                tabBasedNavigation
+            }
 #else
-        // macOS always uses split view
-        splitViewNavigation
+            splitViewNavigation
 #endif
+        }
+        // Presentation and draft lifetime must not follow the compact/regular branch.
+        .sheet(isPresented: $showingInstructionsSheet) {
+            InstructionsSheet(isPresented: $showingInstructionsSheet)
+        }
     }
 
     private var tabBasedNavigation: some View {
@@ -35,7 +43,7 @@ struct AdaptiveNavigationView: View {
             set: { navigationCoordinator.tabSelection = $0 }
         )) {
             NavigationStack {
-                ChatView(viewModel: $chatViewModel)
+                ChatView(viewModel: $chatViewModel, messageText: $messageText)
             }
             .tabItem {
                 Label(TabSelection.chat.displayName, systemImage: TabSelection.chat.systemImage)
@@ -43,7 +51,9 @@ struct AdaptiveNavigationView: View {
             .tag(TabSelection.chat)
 
             NavigationStack {
-                AssistantView()
+                AssistantView(selectedTab: $assistantSelectedTab) {
+                    showingInstructionsSheet = true
+                }
             }
             .tabItem {
                 Label(TabSelection.assistant.displayName, systemImage: TabSelection.assistant.systemImage)
@@ -51,7 +61,7 @@ struct AdaptiveNavigationView: View {
             .tag(TabSelection.assistant)
 
             NavigationStack {
-                ModelView()
+                ModelView(selectedTab: $modelSelectedTab)
             }
             .tabItem {
                 Label(TabSelection.model.displayName, systemImage: TabSelection.model.systemImage)
@@ -99,15 +109,17 @@ struct AdaptiveNavigationView: View {
         switch navigationCoordinator.splitViewSelection ?? .chat {
         case .chat:
             NavigationStack {
-                ChatView(viewModel: $chatViewModel)
+                ChatView(viewModel: $chatViewModel, messageText: $messageText)
             }
         case .assistant:
             NavigationStack {
-                AssistantView()
+                AssistantView(selectedTab: $assistantSelectedTab) {
+                    showingInstructionsSheet = true
+                }
             }
         case .model:
             NavigationStack {
-                ModelView()
+                ModelView(selectedTab: $modelSelectedTab)
             }
         case .settings:
             NavigationStack {
@@ -118,6 +130,7 @@ struct AdaptiveNavigationView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     AdaptiveNavigationView()
 }

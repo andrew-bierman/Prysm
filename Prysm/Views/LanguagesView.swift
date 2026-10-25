@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct LanguagesView: View {
     @AppStorage("selectedLanguageModel") private var selectedModel = "default"
     @State private var availableModels: [LanguageModelInfo] = []
@@ -197,6 +198,7 @@ struct ModelCard: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     NavigationStack {
         LanguagesView()

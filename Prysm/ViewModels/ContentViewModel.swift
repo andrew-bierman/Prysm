@@ -9,6 +9,7 @@ import Foundation
 import FoundationModels
 import Observation
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 @Observable
 final class ContentViewModel {
     var isLoading = false

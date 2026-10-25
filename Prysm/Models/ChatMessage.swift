@@ -8,6 +8,7 @@
 import Foundation
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ChatMessage: Identifiable, Equatable {
     let id: UUID
     let entryID: Transcript.Entry.ID?

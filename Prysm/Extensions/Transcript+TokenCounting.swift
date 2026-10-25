@@ -8,6 +8,7 @@
 import Foundation
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 extension Transcript.Entry {
     var estimatedTokenCount: Int {
         switch self {
@@ -33,6 +34,7 @@ extension Transcript.Entry {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 extension Transcript.Segment {
     var estimatedTokenCount: Int {
         switch self {
@@ -47,6 +49,7 @@ extension Transcript.Segment {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 extension Transcript {
     var estimatedTokenCount: Int {
         return self.reduce(0) { $0 + $1.estimatedTokenCount }
@@ -60,6 +63,7 @@ func estimateTokens(_ text: String) -> Int {
     return max(1, Int(ceil(Double(characterCount) * tokensPerChar)))
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 func estimateTokensForStructured(_ content: GeneratedContent) -> Int {
     let jsonString = content.jsonString
     let characterCount = jsonString.count
@@ -67,6 +71,7 @@ func estimateTokensForStructured(_ content: GeneratedContent) -> Int {
     return max(1, Int(ceil(Double(characterCount) * tokensPerChar)))
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 extension Transcript {
     var safeEstimatedTokenCount: Int {
         let baseTokens = estimatedTokenCount

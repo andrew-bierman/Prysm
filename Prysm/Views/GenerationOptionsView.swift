@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct GenerationOptionsView: View {
     @AppStorage("temperature") private var temperature: Double = 0.7
     @AppStorage("maxTokens") private var maxTokens: Int = 2048
@@ -200,6 +201,7 @@ struct GenerationOptionsView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     NavigationStack {
         GenerationOptionsView()

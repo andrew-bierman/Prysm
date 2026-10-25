@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ExamplesView: View {
     @State private var viewModel = ContentViewModel()
     @State private var selectedExample: ExampleType?
@@ -117,6 +118,7 @@ struct ExampleCard: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ExampleDetailView: View {
     let exampleType: ExampleType
     let viewModel: ContentViewModel
@@ -269,6 +271,7 @@ struct ExampleDetailView: View {
 
 // MARK: - Result Views
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct RecipeResultView: View {
     let recipe: Recipe
 
@@ -308,6 +311,7 @@ struct RecipeResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct BookResultView: View {
     let book: BookRecommendation
 
@@ -336,6 +340,7 @@ struct BookResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct TravelResultView: View {
     let itinerary: TravelItinerary
 
@@ -377,6 +382,7 @@ struct TravelResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct StoryResultView: View {
     let story: StoryOutline
 
@@ -422,6 +428,7 @@ struct StoryResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct BusinessResultView: View {
     let business: BusinessIdea
 
@@ -474,6 +481,7 @@ struct BusinessResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct EmailResultView: View {
     let email: EmailDraft
 
@@ -505,6 +513,7 @@ struct EmailResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ReviewResultView: View {
     let review: ProductReview
 
@@ -560,6 +569,7 @@ struct ReviewResultView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     NavigationStack {
         ExamplesView()

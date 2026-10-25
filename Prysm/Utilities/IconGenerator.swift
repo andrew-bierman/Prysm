@@ -54,7 +54,7 @@ struct AppIconView: View {
     }
 }
 
-struct PrismShape: Shape {
+nonisolated struct PrismShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let width = rect.width
@@ -166,7 +166,7 @@ struct AlternativeAppIconView: View {
     }
 }
 
-struct ChatBubblePrism: Shape {
+nonisolated struct ChatBubblePrism: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let width = rect.width

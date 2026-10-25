@@ -7,8 +7,9 @@
 
 import SwiftUI
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct ModelView: View {
-    @State private var selectedTab = 0
+    @Binding var selectedTab: Int
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,8 +38,10 @@ struct ModelView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
+    @Previewable @State var selectedTab = 0
     NavigationStack {
-        ModelView()
+        ModelView(selectedTab: $selectedTab)
     }
 }

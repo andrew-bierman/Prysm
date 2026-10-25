@@ -180,10 +180,10 @@ enum AppConfig {
     static let supportURL = URL(string: "https://github.com/\(developerName.lowercased().replacingOccurrences(of: " ", with: ""))/\(appShortName.lowercased())")
 
     /// Privacy policy URL
-    static let privacyURL = URL(string: "https://github.com/andrewbierman/Prysm/blob/main/PRIVACY.md")
+    static let privacyURL = URL(string: "https://biermancollective.com/privacy-policy")
 
     /// Terms of service URL
-    static let termsURL = URL(string: "https://github.com/andrewbierman/Prysm/blob/main/TERMS.md")
+    static let termsURL = URL(string: "https://biermancollective.com/terms-of-service")
 
     // MARK: - Version Info
 

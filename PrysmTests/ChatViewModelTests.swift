@@ -13,6 +13,7 @@ import FoundationModels
 @MainActor
 struct ChatViewModelTests {
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("ViewModel initializes correctly")
     func testViewModelInitialization() async {
         let viewModel = ChatViewModel()
@@ -26,6 +27,7 @@ struct ChatViewModelTests {
         #expect(viewModel.feedbackState.isEmpty)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Base instructions default to AppConfig value")
     func testBaseInstructions() async {
         let viewModel = ChatViewModel()
@@ -33,6 +35,7 @@ struct ChatViewModelTests {
         #expect(viewModel.baseInstructions == AppConfig.assistantInstructions)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Instructions include base instructions when enabled")
     func testInstructionsWithBaseEnabled() async {
         let viewModel = ChatViewModel()
@@ -48,6 +51,7 @@ struct ChatViewModelTests {
         UserDefaults.standard.removeObject(forKey: "useBaseInstructions")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Instructions include custom instructions when enabled")
     func testCustomInstructions() async {
         let viewModel = ChatViewModel()
@@ -67,6 +71,7 @@ struct ChatViewModelTests {
         UserDefaults.standard.removeObject(forKey: "customInstructions")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Instructions exclude custom instructions when disabled")
     func testCustomInstructionsDisabled() async {
         let viewModel = ChatViewModel()
@@ -84,6 +89,7 @@ struct ChatViewModelTests {
         UserDefaults.standard.removeObject(forKey: "customInstructions")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Instructions are empty when base disabled and no custom")
     func testInstructionsBaseDisabled() async {
         let viewModel = ChatViewModel()
@@ -99,6 +105,7 @@ struct ChatViewModelTests {
         UserDefaults.standard.removeObject(forKey: "useCustomInstructions")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Clear chat resets session and state")
     func testClearChat() async {
         let viewModel = ChatViewModel()
@@ -112,6 +119,7 @@ struct ChatViewModelTests {
         #expect(viewModel.feedbackState.isEmpty)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Update instructions changes base instructions")
     func testUpdateInstructions() async {
         let viewModel = ChatViewModel()
@@ -122,6 +130,7 @@ struct ChatViewModelTests {
         #expect(viewModel.baseInstructions == newInstructions)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Dismiss error clears error state")
     func testDismissError() async {
         let viewModel = ChatViewModel()
@@ -140,6 +149,7 @@ struct ChatViewModelTests {
         #expect(!viewModel.showError)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Error state can be set")
     func testErrorState() async {
         let viewModel = ChatViewModel()
@@ -154,6 +164,7 @@ struct ChatViewModelTests {
         #expect(viewModel.showError)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Loading state can be toggled")
     func testLoadingState() async {
         let viewModel = ChatViewModel()
@@ -167,6 +178,7 @@ struct ChatViewModelTests {
         #expect(!viewModel.isLoading)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Summarizing state can be toggled")
     func testSummarizingState() async {
         let viewModel = ChatViewModel()
@@ -180,6 +192,7 @@ struct ChatViewModelTests {
         #expect(!viewModel.isSummarizing)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Session count starts at 1")
     func testSessionCount() async {
         let viewModel = ChatViewModel()
@@ -187,6 +200,7 @@ struct ChatViewModelTests {
         #expect(viewModel.sessionCount == 1)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Feedback state stores sentiment by entry ID")
     func testFeedbackState() async {
         let viewModel = ChatViewModel()
@@ -199,6 +213,7 @@ struct ChatViewModelTests {
         #expect(viewModel.feedbackState.count == 0)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Refresh session creates a new session")
     func testRefreshSession() async {
         let viewModel = ChatViewModel()
@@ -211,6 +226,7 @@ struct ChatViewModelTests {
         #expect(!viewModel.isSummarizing)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Clear chat after setting error also clears feedback")
     func testClearChatResetsAllState() async {
         let viewModel = ChatViewModel()

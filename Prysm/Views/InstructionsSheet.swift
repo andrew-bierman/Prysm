@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct InstructionsSheet: View {
     @Binding var isPresented: Bool
     @AppStorage("customInstructions") private var customInstructions = ""
@@ -185,6 +186,7 @@ struct InstructionsSheet: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     InstructionsSheet(isPresented: .constant(true))
 }

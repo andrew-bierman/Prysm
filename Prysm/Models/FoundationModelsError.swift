@@ -31,6 +31,7 @@ nonisolated enum FoundationModelsError: LocalizedError, Sendable {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct FoundationModelsErrorHandler: Sendable {
     static func handleGenerationError(_ error: LanguageModelSession.GenerationError) -> String {
         switch error {

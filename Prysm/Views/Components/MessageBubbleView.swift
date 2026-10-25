@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct MessageBubbleView: View {
     let message: ChatMessage
     @Environment(ChatViewModel.self) var viewModel

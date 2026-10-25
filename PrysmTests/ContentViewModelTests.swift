@@ -13,6 +13,7 @@ import Foundation
 @Suite("ContentViewModel Tests")
 struct ContentViewModelTests {
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("ViewModel initializes with empty generated content")
     func testViewModelInitialization() async {
         let viewModel = ContentViewModel()
@@ -29,6 +30,7 @@ struct ContentViewModelTests {
         #expect(!viewModel.isLoading)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Loading status can be toggled")
     func testLoadingStatus() async {
         let viewModel = ContentViewModel()
@@ -42,6 +44,7 @@ struct ContentViewModelTests {
         #expect(!viewModel.isLoading)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Recipe can be stored on view model")
     func testRecipeStorage() async {
         let viewModel = ContentViewModel()
@@ -69,6 +72,7 @@ struct ContentViewModelTests {
         #expect(viewModel.lastGeneratedContent != nil)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("BookRecommendation can be stored on view model")
     func testBookRecommendationStorage() async {
         let viewModel = ContentViewModel()
@@ -92,6 +96,7 @@ struct ContentViewModelTests {
         #expect(viewModel.lastGeneratedContent != nil)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("TravelItinerary can be stored on view model")
     func testItineraryStorage() async {
         let viewModel = ContentViewModel()
@@ -129,6 +134,7 @@ struct ContentViewModelTests {
         #expect(viewModel.generatedItinerary?.accommodations.count == 2)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("StoryOutline can be stored on view model")
     func testStoryStorage() async {
         let viewModel = ContentViewModel()
@@ -151,6 +157,7 @@ struct ContentViewModelTests {
         #expect(viewModel.generatedStory?.themes.count == 3)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("BusinessIdea can be stored on view model")
     func testBusinessIdeaStorage() async {
         let viewModel = ContentViewModel()
@@ -174,6 +181,7 @@ struct ContentViewModelTests {
         #expect(viewModel.generatedBusiness?.timeline == "6 months to launch")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("EmailDraft can be stored on view model")
     func testEmailStorage() async {
         let viewModel = ContentViewModel()
@@ -193,6 +201,7 @@ struct ContentViewModelTests {
         #expect(viewModel.generatedEmail?.tone == .professional)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("ProductReview can be stored on view model")
     func testProductReviewStorage() async {
         let viewModel = ContentViewModel()
@@ -216,6 +225,7 @@ struct ContentViewModelTests {
         #expect(viewModel.generatedReview?.cons.count == 2)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("clearResults resets all generated content")
     func testClearResults() async {
         let viewModel = ContentViewModel()
@@ -254,6 +264,7 @@ struct ContentViewModelTests {
         #expect(viewModel.errorMessage == nil)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Error message can be set and cleared")
     func testErrorMessage() async {
         let viewModel = ContentViewModel()
@@ -273,6 +284,7 @@ struct ContentViewModelTests {
 @Suite("Data Model Tests")
 struct DataModelTests {
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("Recipe model properties")
     func testRecipeModel() {
         let recipe = Recipe(
@@ -294,6 +306,7 @@ struct DataModelTests {
         #expect(recipe.instructions.count == 4)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("RecipeDifficulty enum values")
     func testRecipeDifficulty() {
         #expect(RecipeDifficulty.easy.rawValue == "easy")
@@ -301,6 +314,7 @@ struct DataModelTests {
         #expect(RecipeDifficulty.hard.rawValue == "hard")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("BookRecommendation model properties")
     func testBookRecommendationModel() {
         let book = BookRecommendation(
@@ -318,6 +332,7 @@ struct DataModelTests {
         #expect(book.recommendation == "Classic must-read")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("BookGenre enum values")
     func testBookGenre() {
         #expect(BookGenre.fiction.rawValue == "fiction")
@@ -326,6 +341,7 @@ struct DataModelTests {
         #expect(BookGenre.sciFi.rawValue == "sciFi")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("DayPlan model properties")
     func testDayPlanModel() {
         let dayPlan = DayPlan(
@@ -341,6 +357,7 @@ struct DataModelTests {
         #expect(dayPlan.evening == "Dinner show")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("TravelItinerary model properties")
     func testTravelItineraryModel() {
         let itinerary = TravelItinerary(
@@ -360,6 +377,7 @@ struct DataModelTests {
         #expect(itinerary.accommodations.count == 1)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("TravelBudget enum values")
     func testTravelBudget() {
         #expect(TravelBudget.budget.rawValue == "budget")
@@ -367,6 +385,7 @@ struct DataModelTests {
         #expect(TravelBudget.luxury.rawValue == "luxury")
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("StoryOutline model properties")
     func testStoryOutlineModel() {
         let story = StoryOutline(
@@ -386,6 +405,7 @@ struct DataModelTests {
         #expect(story.themes.count == 2)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("BusinessIdea model properties with optional timeline")
     func testBusinessIdeaModel() {
         let ideaWithTimeline = BusinessIdea(
@@ -415,6 +435,7 @@ struct DataModelTests {
         #expect(ideaWithoutTimeline.timeline == nil)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("ProductReview model properties")
     func testProductReviewModel() {
         let review = ProductReview(
@@ -434,6 +455,7 @@ struct DataModelTests {
         #expect(review.cons.count == 1)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("EmailDraft model properties")
     func testEmailDraftModel() {
         let email = EmailDraft(
@@ -451,6 +473,7 @@ struct DataModelTests {
         #expect(email.tone == .casual)
     }
 
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("EmailTone enum values")
     func testEmailTone() {
         #expect(EmailTone.formal.rawValue == "formal")

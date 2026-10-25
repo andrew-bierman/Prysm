@@ -8,9 +8,9 @@
 import SwiftUI
 import FoundationModels
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 struct SettingsView: View {
     @Environment(ChatViewModel.self) private var chatViewModel
-    @AppStorage("autoSaveConversations") private var autoSaveConversations = true
     @AppStorage("enableHaptics") private var enableHaptics = true
     @AppStorage("showWordCount") private var showWordCount = false
     @AppStorage("appearanceMode") private var appearanceMode = "system"
@@ -95,7 +95,6 @@ struct SettingsView: View {
     private var chatSection: some View {
         Section {
             Toggle("Use Base System Instructions", isOn: $useBaseInstructions)
-            Toggle("Auto-save Conversations", isOn: $autoSaveConversations)
             Toggle("Show Word Count", isOn: $showWordCount)
             Toggle("Enable Haptic Feedback", isOn: $enableHaptics)
             Toggle("Sound Effects", isOn: $enableSoundEffects)
@@ -106,6 +105,7 @@ struct SettingsView: View {
         } header: {
             Text("Chat")
         } footer: {
+            Text("Conversations are kept for this session and are not saved when the app closes.")
             if !useBaseInstructions {
                 Text("Base system instructions are disabled. The AI will have no predefined behavior constraints.")
             }
@@ -234,7 +234,6 @@ struct SettingsView: View {
     }
 
     private func resetAllSettings() {
-        autoSaveConversations = true
         enableHaptics = true
         showWordCount = false
         appearanceMode = "system"
@@ -386,6 +385,7 @@ struct AboutView: View {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 #Preview {
     NavigationStack {
         SettingsView()
