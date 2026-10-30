@@ -122,6 +122,9 @@ struct ExampleCard: View {
 struct ExampleDetailView: View {
     let exampleType: ExampleType
     let viewModel: ContentViewModel
+#if DEBUG
+    var generationOverride: (@MainActor (String) async -> Void)? = nil
+#endif
     @State private var prompt = ""
     @State private var generationTask: Task<Void, Never>?
     @Environment(\.dismiss) private var dismiss
@@ -256,6 +259,12 @@ struct ExampleDetailView: View {
     }
 
     private func generateContent() async {
+#if DEBUG
+        if let generationOverride {
+            await generationOverride(prompt)
+            return
+        }
+#endif
         switch exampleType {
         case .recipes:
             await viewModel.generateRecipe(prompt: prompt)

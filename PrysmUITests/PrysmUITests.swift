@@ -135,3 +135,51 @@ final class AdaptiveRefreshAcceptanceTests: XCTestCase {
         capture("Model selection after rotation")
     }
 }
+
+final class ActiveGenerationCancellationTests: XCTestCase {
+    @MainActor
+    func testCloseAndSwipeCancelActiveGeneration() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments.append("--ui-test-generation-cancellation")
+        XCUIDevice.shared.orientation = .portrait
+        addTeardownBlock { app.terminate() }
+        app.launch()
+        let open = app.buttons["Open test example"]
+        XCTAssertTrue(open.waitForExistence(timeout: 5), "Requires Debug build and iOS26+ test host")
+
+        for attempt in 1...2 {
+            open.tap()
+            let sheetTitle = app.navigationBars["Recipe Ideas"]
+            XCTAssertTrue(sheetTitle.waitForExistence(timeout: 5))
+            let field = app.textFields.firstMatch
+            let input = field.waitForExistence(timeout: 2) ? field : app.textViews.firstMatch
+            XCTAssertTrue(input.waitForExistence(timeout: 5))
+            input.tap()
+            input.typeText("Synthetic cancellation check")
+            let generate = app.buttons["Generate"]
+            // Scroll the form to dismiss the keyboard without dismissing the sheet.
+            if !generate.isHittable { app.swipeUp() }
+            generate.tap()
+            XCTAssertTrue(app.staticTexts["Generating..."].waitForExistence(timeout: 5))
+            XCTAssertFalse(generate.isEnabled)
+            if attempt == 1 {
+                app.buttons["Close"].tap()
+            } else {
+                // Begin on the navigation bar and travel most of the sheet height.
+                let start = sheetTitle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95))
+                start.press(forDuration: 0.1, thenDragTo: end)
+            }
+            XCTAssertTrue(open.waitForExistence(timeout: 5))
+            XCTAssertTrue(app.staticTexts["Cancelled requests: \(attempt)"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.staticTexts["Provider idle"].exists)
+            XCTAssertTrue(app.staticTexts["No generation error"].exists)
+            XCTAssertTrue(app.staticTexts["No generated result"].exists)
+        }
+        open.tap()
+        XCTAssertTrue(app.navigationBars["Recipe Ideas"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["Generating..."].exists)
+        XCTAssertFalse(app.staticTexts["Unexpected delayed result"].exists)
+    }
+}
