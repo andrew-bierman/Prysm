@@ -35,3 +35,13 @@ Outgoing history/source scanned with existing Python credential-signature and hi
 4. Validate shared policy links in native Settings and complete native UI/Duo acceptance. No launch-readiness claim until Apple evidence is recorded.
 
 Publication scope is one new branch and one draft PR only; no merge, deployment, new credential, App Store action, or customer-data mutation is authorized.
+
+## Oct 30 dismissal cancellation follow-up
+
+At 2026-10-30 13:43:13 UTC the review branch was verified at `87a6828a0575d135b859c0697c2363267bfc7ce0`. Local work fast-forwarded to preserve both newer Apple-lane commits. Those commit messages report successful native unit/UI and Release validation; this cloud task did not independently inspect their artifacts or rerun them.
+
+Source inspection confirmed ExampleDetailView still launched an unowned Task. It now retains one generation task, rejects duplicate scheduling before the view model enters loading, cancels immediately on Close and on disappearance (including swipe dismissal), and clears its task handle after completion. Whitespace-only input is disabled consistently with the existing model guard. Model/policy/draft logic is unchanged. Cancellation remains cooperative; loading is retained until the provider completes, and existing model guards suppress late delivery.
+
+Added one guarded regression test for cancellation before generation begins, preserving previous results and never invoking provider/publisher. Existing continuation-controlled tests cover cancellation during a suspended provider with late success/error. These model tests do not establish SwiftUI dismissal behavior.
+
+Cloud validation: source checks and `git diff --check` only. New Swift test and SwiftUI changes are uncompiled/unrun here; Swift/Xcode absent. No duplicate or native build started. Parent must coordinate Mini availability (currently assigned to Miradita) before Apple validation: build/test the exact new head, exercise Close and interactive dismissal both immediately after Generate and during generation, reopen another example, verify no late result/error or stuck loading after provider completion, then resume older-OS runtime/live-AI/Duo gates. No repeated GraphQL request; prior Forbidden remains unresolved. Publication is to the existing review branch only, with no merge/release.

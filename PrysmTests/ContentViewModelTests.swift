@@ -242,6 +242,31 @@ struct ContentViewModelTests {
     }
 
     @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @Test("Cancellation before generation starts preserves previous content")
+    func testCancelledBeforeStart() async {
+        let viewModel = ContentViewModel(modelAvailability: { .available })
+        viewModel.lastGeneratedContent = "Previous"
+        var operationCalled = false
+        var published = false
+        let task = Task { @MainActor in
+            withUnsafeCurrentTask { $0?.cancel() }
+            return await viewModel.generate(prompt: "Hello", publish: { (_: String) in
+                published = true
+            }, operation: {
+                operationCalled = true
+                return "Unexpected"
+            })
+        }
+        let result = await task.value
+        #expect(result == nil)
+        #expect(!operationCalled)
+        #expect(!published)
+        #expect(viewModel.lastGeneratedContent as? String == "Previous")
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
     @Test("ViewModel initializes with empty generated content")
     func testViewModelInitialization() async {
         let viewModel = ContentViewModel()

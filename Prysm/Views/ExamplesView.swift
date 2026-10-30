@@ -123,6 +123,7 @@ struct ExampleDetailView: View {
     let exampleType: ExampleType
     let viewModel: ContentViewModel
     @State private var prompt = ""
+    @State private var generationTask: Task<Void, Never>?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -142,7 +143,9 @@ struct ExampleDetailView: View {
 
                     // Generate button
                     Button {
-                        Task {
+                        guard generationTask == nil else { return }
+                        generationTask = Task { @MainActor in
+                            defer { generationTask = nil }
                             await generateContent()
                         }
                     } label: {
@@ -151,7 +154,7 @@ struct ExampleDetailView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
-                    .disabled(prompt.isEmpty || viewModel.isLoading)
+                    .disabled(prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isLoading || generationTask != nil)
                     .padding(.horizontal)
 
                     // Results section
@@ -184,10 +187,15 @@ struct ExampleDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
+                        generationTask?.cancel()
                         dismiss()
                     }
                 }
             }
+        }
+        .onDisappear {
+            // Covers interactive sheet dismissal as well as the Close button.
+            generationTask?.cancel()
         }
     }
 
